@@ -106,14 +106,13 @@ Use Supabase's connection pooler (port 6543) instead of the direct connection if
 
 ## Deploying to Render
 
-**We deploy as a single combined service, not two.** `backend/Dockerfile` builds the React frontend and the Spring Boot backend together, and bundles the built frontend into the backend's static resources — one jar, one Render service, one URL serves both the API and the UI.
+**We deploy as a single combined service, not two.** The `Dockerfile` at the repo root builds the React frontend and the Spring Boot backend together, and bundles the built frontend into the backend's static resources — one jar, one Render service, one URL serves both the API and the UI.
 
 This was a deliberate choice, not just simpler ops: Render's free `*.onrender.com` subdomains are cross-site from each other, so two separate services (frontend on one subdomain, backend on another) would mean the session cookie our login relies on silently never reaches the API after the OAuth redirect. Combining them into one origin sidesteps that entirely — no CORS-across-services, no cross-site cookie flags needed.
 
 **Render service settings:**
 - Type: Web Service, Environment: Docker
-- Dockerfile Path: `backend/Dockerfile`
-- Docker Build Context Directory: `.` (repo root — the Dockerfile needs both `backend/` and `frontend/`, not just `backend/`)
+- Leave Root Directory, Dockerfile Path, and Docker Build Context Directory all at their defaults (blank / `Dockerfile` / `.`) — the Dockerfile lives at the repo root specifically so Render finds it with zero custom path configuration. (It used to live at `backend/Dockerfile` with custom path settings — that's what caused the "open Dockerfile: no such file or directory" build error. `backend/Dockerfile` is now just a pointer comment; delete it once the root one deploys successfully.)
 
 **Environment variables to set on that one service:**
 
