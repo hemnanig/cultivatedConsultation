@@ -94,15 +94,15 @@ The schema lives in `backend/src/main/resources/db/changelog/`, not in the entit
 
 ## Switching the database to Supabase
 
-Once your Supabase project exists, set these instead of the local Docker values:
+**Use the Session Pooler connection, not the direct connection** — this isn't optional once you're on Render. Supabase's direct connection host (`db.<ref>.supabase.co`) is IPv6-only, and Render's outbound networking is IPv4-only, so the direct connection fails there with `PSQLException: The connection attempt failed` even though it works fine from your own machine. Get the Session pooler string from Supabase Dashboard → **Connect** → **Session pooler** tab:
 
 ```bash
-export SPRING_DATASOURCE_URL=jdbc:postgresql://<your-supabase-host>:5432/postgres
-export SPRING_DATASOURCE_USERNAME=postgres
+export SPRING_DATASOURCE_URL=jdbc:postgresql://aws-0-<region>.pooler.supabase.com:5432/postgres
+export SPRING_DATASOURCE_USERNAME=postgres.<project-ref>   # NOT plain "postgres" — pooler routes by username
 export SPRING_DATASOURCE_PASSWORD=<your-supabase-db-password>
 ```
 
-Use Supabase's connection pooler (port 6543) instead of the direct connection if you hit connection-limit issues. Don't add `?currentSchema=...` yourself — `application.yml` appends that automatically.
+Specifically use the **Session pooler (port 5432)**, not the Transaction pooler (port 6543) — Transaction-mode pooling (PgBouncer) breaks Hibernate's prepared-statement caching unless explicitly disabled, and Session pooler avoids that entirely. Don't add `?currentSchema=...` yourself — `application.yml` appends that automatically.
 
 ## Deploying to Render
 
