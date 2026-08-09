@@ -1,0 +1,64 @@
+# All secrets come from environment variables — never commit real values.
+# Locally: export them in your shell, or use `docker-compose --env-file .env up`.
+# On Render: set these as environment variables on the service.
+
+spring:
+  application:
+    name: cultivated-consultation-backend
+
+  datasource:
+    # currentSchema sets this connection's default search_path — belt-and-suspenders
+    # alongside hibernate.default_schema below. Falls back to public only if
+    # cultivated_consultation somehow doesn't exist yet (it won't, once Liquibase's
+    # 000-create-schema changeset has run once).
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/cultivated_consultation}?currentSchema=cultivated_consultation,public
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
+
+  jpa:
+    hibernate:
+      # Liquibase owns the schema now (see db/changelog). Hibernate only checks that
+      # the entities match what Liquibase actually created — it never writes DDL itself.
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        # All app tables live in their own schema, never in Postgres's default "public".
+        default_schema: cultivated_consultation
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:changeme}
+            client-secret: ${GOOGLE_CLIENT_SECRET:changeme}
+            scope:
+              - openid
+              - profile
+              - email
+
+server:
+  port: ${PORT:8080}
+  servlet:
+    session:
+      cookie:
+        # Render's default *.onrender.com subdomains are cross-site from each other
+        # (frontend and backend land on different onrender.com subdomains), so a
+        # plain Lax session cookie silently never gets sent on the frontend's API
+        # calls — login would appear to work then /api/me stays 401 forever.
+        # Set COOKIE_SAME_SITE=none + COOKIE_SECURE=true on Render. Local dev keeps
+        # the defaults below (Lax works fine — localhost:5173/8080 count as same-site).
+        same-site: ${COOKIE_SAME_SITE:lax}
+        secure: ${COOKIE_SECURE:false}
+
+app:
+  # Comma-separated list of emails that get auto-approved + admin rights on first login.
+  # POC-only stand-in for the real verification console described in the product brief.
+  admin-emails: ${APP_ADMIN_EMAILS:}
+  # Where the backend redirects the browser after a successful Google login.
+  frontend-base-url: ${APP_FRONTEND_BASE_URL:http://localhost:5173}

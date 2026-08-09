@@ -1,0 +1,134 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-app-user
+      author: cultivated-consultation
+      changes:
+        - createTable:
+            schemaName: cultivated_consultation
+            tableName: app_user
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: google_sub
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  name: badge
+                  type: VARCHAR(255)
+              - column:
+                  name: membership_status
+                  type: VARCHAR(32)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_admin
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP WITH TIME ZONE
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 002-create-post
+      author: cultivated-consultation
+      changes:
+        - createTable:
+            schemaName: cultivated_consultation
+            tableName: post
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: author_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_post_author
+                    references: app_user(id)
+              - column:
+                  name: content
+                  type: VARCHAR(4000)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP WITH TIME ZONE
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 003-create-reply
+      author: cultivated-consultation
+      changes:
+        - createTable:
+            schemaName: cultivated_consultation
+            tableName: reply
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: post_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_reply_post
+                    references: post(id)
+              - column:
+                  name: author_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_reply_author
+                    references: app_user(id)
+              - column:
+                  name: content
+                  type: VARCHAR(4000)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP WITH TIME ZONE
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 004-index-post-created-at
+      author: cultivated-consultation
+      changes:
+        - createIndex:
+            schemaName: cultivated_consultation
+            indexName: idx_post_created_at
+            tableName: post
+            columns:
+              - column:
+                  name: created_at

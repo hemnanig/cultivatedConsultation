@@ -1,0 +1,21 @@
+# Docker build context is the repo root — this is the .dockerignore that actually
+# applies (backend/.dockerignore is a leftover from before the combined-deploy
+# setup and is no longer read by Docker).
+
+.git/
+.claude/
+design-references/
+*.md
+
+backend/target/
+backend/.mvn/
+backend/*.iml
+backend/.idea/
+
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+.env
+*.env.local
+.DS_Store

@@ -1,0 +1,19 @@
+# Backend
+backend/target/
+backend/.mvn/
+*.class
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Env / secrets — never commit real credentials
+.env
+*.env.local
+
+# OS / IDE
+.DS_Store
+.idea/
+*.iml
+.vscode/

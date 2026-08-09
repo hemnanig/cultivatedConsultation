@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 000-create-app-schema
+      author: cultivated-consultation
+      comment: >
+        Everything the app owns lives in its own schema, never in Postgres's default
+        "public" schema — keeps it isolated from anything else Supabase or other
+        tools put in the same database. Liquibase's own bookkeeping tables
+        (databasechangelog/databasechangeloglock) stay in public; that's just
+        Liquibase's internal tracking, not application data, and keeping them
+        there sidesteps a create-schema-before-Liquibase-can-even-start ordering problem.
+      changes:
+        - sql:
+            sql: CREATE SCHEMA IF NOT EXISTS cultivated_consultation;
