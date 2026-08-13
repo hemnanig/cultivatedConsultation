@@ -10,7 +10,7 @@ export default function AppLayout({ me, onSignedOut, children }) {
   return (
     <div className="min-h-screen bg-stone-50">
       <Topbar me={me} onSignedOut={onSignedOut} />
-      <div className="pb-16 md:pb-0 md:pt-14">{children}</div>
+      <div className="pb-[calc(4rem+env(safe-area-inset-bottom))] md:pb-0 md:pt-14">{children}</div>
       <BottomNav me={me} onSignedOut={onSignedOut} />
     </div>
   )

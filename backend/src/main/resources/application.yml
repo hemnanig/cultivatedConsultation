@@ -29,6 +29,20 @@ spring:
 
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
+    # Pin Liquibase's own bookkeeping tables (databasechangelog/-lock) to public
+    # explicitly. Without this, Liquibase resolves its control-table schema from
+    # the connection's default schema, which is search_path-dependent
+    # (currentSchema=cultivated_consultation,public — see datasource.url above):
+    # on the very first run cultivated_consultation doesn't exist yet, so the
+    # search path falls through to public and the control tables land there —
+    # but on every later run cultivated_consultation now exists and wins the
+    # search path instead, so Liquibase creates a second, empty control-table
+    # pair inside cultivated_consultation, believes no changesets have run, and
+    # tries to recreate every table from scratch. That crashes the app on every
+    # restart after the first (every Render redeploy/restart included) with
+    # "relation already exists". Pinning liquibase-schema sidesteps the
+    # search-path resolution entirely.
+    liquibase-schema: public
 
   security:
     oauth2:

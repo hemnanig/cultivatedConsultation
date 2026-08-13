@@ -39,7 +39,7 @@ export default function MoreSheet({ me, onSignedOut, onClose }) {
   return (
     <div className="fixed inset-0 z-40 md:hidden">
       <div className="absolute inset-0 bg-stone-900/30" onClick={onClose} />
-      <div className="absolute inset-x-0 bottom-16 max-h-[80vh] overflow-y-auto rounded-t-2xl bg-surface p-3 shadow-lg">
+      <div className="absolute inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] max-h-[80vh] overflow-y-auto rounded-t-2xl bg-surface p-3 shadow-lg">
         <Link
           to="/profile"
           onClick={onClose}

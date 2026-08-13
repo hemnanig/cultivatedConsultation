@@ -165,8 +165,12 @@
            disabled:cursor-default disabled:opacity-50 disabled:hover:bg-transparent;
   }
 
+  /* text-base (16px) below the sm breakpoint, not text-sm (14px) — iOS Safari
+     auto-zooms the whole page on focus for any input/textarea under 16px,
+     which reads as the layout "jumping" or going out of alignment the moment
+     you start typing on a phone. Desktop keeps the smaller text-sm. */
   .cc-input {
-    @apply w-full rounded-lg border border-stone-300 bg-surface px-3 py-2 text-sm text-stone-900
+    @apply w-full rounded-lg border border-stone-300 bg-surface px-3 py-2 text-base sm:text-sm text-stone-900
            placeholder:text-stone-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/25;
   }
 }

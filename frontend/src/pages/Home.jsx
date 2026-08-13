@@ -55,7 +55,7 @@ export default function Home({ me, onSignedOut }) {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Search members by name, credential, or specialty…"
-                  className="w-full bg-transparent text-sm text-stone-900 placeholder:text-stone-400 focus:outline-none"
+                  className="w-full bg-transparent text-base text-stone-900 placeholder:text-stone-400 focus:outline-none"
                 />
               </div>
             </form>

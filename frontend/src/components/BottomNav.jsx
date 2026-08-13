@@ -27,24 +27,30 @@ export default function BottomNav({ me, onSignedOut }) {
 
   return (
     <>
-      <nav className="fixed inset-x-0 bottom-0 z-30 flex h-16 items-stretch border-t border-stone-200 bg-surface md:hidden">
-        {tabs.map(({ to, label, icon: Icon, end }) => (
-          <NavLink key={to} to={to} end={end} className={tabClasses}>
-            <Icon className="h-5 w-5" />
-            {label}
-          </NavLink>
-        ))}
-        <button
-          onClick={() => setMoreOpen(true)}
-          className={'flex flex-1 flex-col items-center justify-center gap-0.5 text-xs font-medium ' + (moreOpen ? 'text-brand-700' : 'text-stone-500')}
-        >
-          <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor">
-            <circle cx="5" cy="12" r="1.75" />
-            <circle cx="12" cy="12" r="1.75" />
-            <circle cx="19" cy="12" r="1.75" />
-          </svg>
-          More
-        </button>
+      {/* Padding-bottom (not height) carries the safe-area inset so the bar's
+          total footprint grows to clear the home-indicator area on notched
+          iPhones instead of the tab row itself being squeezed into it —
+          without this the bar sits partly behind/under the home indicator. */}
+      <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-stone-200 bg-surface pb-[env(safe-area-inset-bottom)] md:hidden">
+        <div className="flex h-16 items-stretch">
+          {tabs.map(({ to, label, icon: Icon, end }) => (
+            <NavLink key={to} to={to} end={end} className={tabClasses}>
+              <Icon className="h-5 w-5" />
+              {label}
+            </NavLink>
+          ))}
+          <button
+            onClick={() => setMoreOpen(true)}
+            className={'flex flex-1 flex-col items-center justify-center gap-0.5 text-xs font-medium ' + (moreOpen ? 'text-brand-700' : 'text-stone-500')}
+          >
+            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor">
+              <circle cx="5" cy="12" r="1.75" />
+              <circle cx="12" cy="12" r="1.75" />
+              <circle cx="19" cy="12" r="1.75" />
+            </svg>
+            More
+          </button>
+        </div>
       </nav>
 
       {moreOpen && <MoreSheet me={me} onSignedOut={onSignedOut} onClose={() => setMoreOpen(false)} />}
