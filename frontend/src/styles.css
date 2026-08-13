@@ -3,108 +3,118 @@
 @tailwind utilities;
 
 /*
- * "Warm clinical editorial" palette — a warm cream/ink neutral ramp instead
- * of flat gray, the existing deep teal as primary accent, and a new clay/
- * terracotta secondary accent used deliberately (credential-tier variety,
- * a couple of purposeful highlights) rather than sprayed across every
- * element. Dark mode isn't a filtered/inverted version of light mode — each
- * ramp has its own hand-picked dark values so it still reads as warm rather
- * than a generic near-black SaaS dark mode.
+ * "Social feed" palette — the cool light-gray page background, vivid blue
+ * primary, and white floating cards that read instantly as a social/
+ * networking app (LinkedIn, Facebook) rather than a muted editorial site.
+ * Blue carries every primary action and link; a warm coral secondary accent
+ * (clay) is reserved for the same handful of deliberate highlight moments
+ * as before (credential-tier variety, "create a group" nudges) so it stays
+ * meaningful instead of becoming wallpaper. Status colors (pending/approved/
+ * denied) are saturated amber/green/red so state is legible at a glance.
+ *
+ * All values are space-separated RGB channels, not hex — required so
+ * Tailwind's opacity modifiers (ring-brand-500/25, bg-stone-900/30) can
+ * compute rgb(var(--x) / alpha). Dark mode isn't a filtered/inverted version
+ * of light mode — each ramp has its own hand-picked dark values (near-black
+ * blue-gray surfaces, like Facebook/LinkedIn dark mode, not a generic invert).
  *
  * Shade *roles* stay consistent across both themes even though the literal
  * lightness direction flips: 50/100 is always the recessive/soft-fill end
- * (pale mint tint in light mode, dark ink tint in dark mode), 900 is always
- * the highest-emphasis/foreground end. That's what lets every existing
+ * (pale tint in light mode, dark tint in dark mode), 900 is always the
+ * highest-emphasis/foreground end. That's what lets every existing
  * bg-brand-50 + text-brand-700 pairing in the app keep working unmodified.
  */
 :root {
-  --stone-50: #faf6ef;
-  --stone-100: #f3eee1;
-  --stone-200: #e7dfcb;
-  --stone-300: #d6c9ac;
-  --stone-400: #a79e88;
-  --stone-500: #8a8371;
-  --stone-600: #6b6355;
-  --stone-700: #55503f;
-  --stone-800: #3a362b;
-  --stone-900: #2a2620;
+  --stone-50: 240 242 245;
+  --stone-100: 228 230 234;
+  --stone-200: 211 214 219;
+  --stone-300: 176 179 186;
+  --stone-400: 138 141 150;
+  --stone-500: 107 110 118;
+  --stone-600: 82 84 92;
+  --stone-700: 58 59 66;
+  --stone-800: 38 39 44;
+  --stone-900: 22 23 27;
 
-  /* Space-separated RGB channels, not hex — required so Tailwind's opacity
-     modifiers (ring-brand-500/25) can compute rgb(var(--brand-500) / 0.25). */
-  --brand-50: 238 244 242;
-  --brand-100: 215 230 226;
-  --brand-200: 176 205 197;
-  --brand-300: 132 176 164;
-  --brand-400: 89 143 128;
-  --brand-500: 60 109 97;
-  --brand-600: 45 79 74;
-  --brand-700: 37 64 60;
-  --brand-800: 30 51 48;
-  --brand-900: 21 38 36;
+  /* Vivid blue — the primary accent, the color every "social app" reads off
+     first (buttons, links, active nav state). */
+  --brand-50: 234 243 252;
+  --brand-100: 211 231 250;
+  --brand-200: 168 207 245;
+  --brand-300: 116 176 237;
+  --brand-400: 61 142 224;
+  --brand-500: 27 116 228;
+  --brand-600: 10 102 194;
+  --brand-700: 0 65 130;
+  --brand-800: 0 55 102;
+  --brand-900: 0 35 71;
 
-  --clay-50: 251 238 231;
-  --clay-100: 246 228 219;
-  --clay-200: 237 199 176;
-  --clay-300: 224 164 127;
-  --clay-400: 208 130 79;
-  --clay-500: 193 101 63;
-  --clay-600: 166 83 47;
-  --clay-700: 138 61 31;
-  --clay-800: 107 46 23;
-  --clay-900: 74 31 15;
+  /* Warm coral/orange — secondary accent, used sparingly and deliberately
+     (see design notes above), never the default button, so it stays a real
+     accent against the blue rather than competing with it. */
+  --clay-50: 255 241 234;
+  --clay-100: 255 225 209;
+  --clay-200: 255 195 163;
+  --clay-300: 255 159 110;
+  --clay-400: 255 122 61;
+  --clay-500: 250 90 30;
+  --clay-600: 224 71 15;
+  --clay-700: 184 56 12;
+  --clay-800: 143 43 10;
+  --clay-900: 92 28 8;
 
   --surface: 255 255 255;
 
-  --status-pending: 183 121 31;
-  --status-pending-bg: 251 243 226;
-  --status-approved: 47 125 79;
-  --status-approved-bg: 232 245 236;
-  --status-denied: 179 38 30;
-  --status-denied-bg: 251 234 233;
+  --status-pending: 180 95 6;
+  --status-pending-bg: 254 243 199;
+  --status-approved: 21 128 61;
+  --status-approved-bg: 220 252 231;
+  --status-denied: 220 38 38;
+  --status-denied-bg: 254 226 226;
 }
 
 .dark {
-  --stone-50: #171d1a;
-  --stone-100: #1f2621;
-  --stone-200: #2c352f;
-  --stone-300: #3a443c;
-  --stone-400: #78877d;
-  --stone-500: #93a197;
-  --stone-600: #aeb9a9;
-  --stone-700: #c7d0c2;
-  --stone-800: #e1e6db;
-  --stone-900: #f4f1e8;
+  --stone-50: 24 25 27;
+  --stone-100: 36 37 41;
+  --stone-200: 51 53 58;
+  --stone-300: 70 72 79;
+  --stone-400: 122 125 133;
+  --stone-500: 148 151 159;
+  --stone-600: 175 178 185;
+  --stone-700: 202 204 210;
+  --stone-800: 227 229 233;
+  --stone-900: 245 246 248;
 
-  --brand-50: 23 37 31;
-  --brand-100: 30 47 40;
-  --brand-200: 41 66 56;
-  --brand-300: 58 92 76;
-  --brand-400: 79 122 100;
-  --brand-500: 107 156 137;
-  --brand-600: 74 174 139;
-  --brand-700: 143 216 185;
-  --brand-800: 195 236 217;
-  --brand-900: 227 247 236;
+  --brand-50: 13 22 35;
+  --brand-100: 17 30 46;
+  --brand-200: 22 42 64;
+  --brand-300: 30 58 87;
+  --brand-400: 40 82 122;
+  --brand-500: 53 115 168;
+  --brand-600: 66 148 214;
+  --brand-700: 110 179 227;
+  --brand-800: 165 210 240;
+  --brand-900: 214 233 250;
 
-  --clay-50: 36 24 17;
-  --clay-100: 47 31 22;
-  --clay-200: 71 45 29;
-  --clay-300: 107 65 40;
-  --clay-400: 143 87 52;
-  --clay-500: 184 116 69;
-  --clay-600: 217 143 92;
-  --clay-700: 237 175 128;
-  --clay-800: 245 203 168;
-  --clay-900: 251 230 210;
+  --clay-50: 43 22 13;
+  --clay-100: 56 28 16;
+  --clay-200: 82 40 20;
+  --clay-300: 117 55 24;
+  --clay-400: 156 74 30;
+  --clay-500: 199 97 38;
+  --clay-600: 227 121 51;
+  --clay-700: 245 150 84;
+  --clay-800: 250 185 137;
+  --clay-900: 253 217 189;
 
-  --surface: 31 40 34;
+  --surface: 30 32 35;
 
-  --status-pending: 232 181 99;
-  --status-pending-bg: 51 39 17;
-  --status-approved: 116 203 154;
-  --status-approved-bg: 22 48 31;
-  --status-denied: 227 138 131;
-  --status-denied-bg: 58 26 23;
+  --status-pending: 251 191 36;
+  --status-pending-bg: 66 32 6;
+  --status-approved: 52 211 153;
+  --status-approved-bg: 6 61 35;
+  --status-denied: 248 113 113;
+  --status-denied-bg: 69 10 10;
 }
 
 @layer base {

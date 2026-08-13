@@ -21,7 +21,7 @@ export default {
           800: 'rgb(var(--stone-800) / <alpha-value>)',
           900: 'rgb(var(--stone-900) / <alpha-value>)',
         },
-        // Deep teal-green — the primary accent. RGB-channel CSS vars (not hex
+        // Vivid blue — the primary accent. RGB-channel CSS vars (not hex
         // strings) wrapped in rgb(... / <alpha-value>) so Tailwind's opacity
         // modifiers work (e.g. ring-brand-500/25) even though the underlying
         // value is a theme-swappable custom property.
