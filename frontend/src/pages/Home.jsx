@@ -33,7 +33,9 @@ export default function Home({ me, onSignedOut }) {
   return (
     <AppLayout me={me} onSignedOut={onSignedOut}>
       <main className="mx-auto flex max-w-3xl flex-col gap-3 px-4 py-8">
-        <form onSubmit={submitSearch}>
+        {/* Desktop already has a persistent search box in the top bar — this
+            one only needs to show on mobile, where Topbar is hidden. */}
+        <form onSubmit={submitSearch} className="md:hidden">
           <div className="flex items-center gap-2 rounded-full border border-stone-300 bg-white px-4 py-2.5 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-100">
             <SearchIcon className="h-4 w-4 shrink-0 text-stone-400" />
             <input

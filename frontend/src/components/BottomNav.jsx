@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
-import { HomeIcon, UsersIcon, GroupIcon, MailIcon } from './icons.jsx'
+import { HomeIcon, UsersIcon, GroupIcon, ChatBubbleIcon } from './icons.jsx'
 import MoreSheet from './MoreSheet.jsx'
 
 /**
@@ -15,7 +15,7 @@ const tabs = [
   { to: '/', label: 'Home', icon: HomeIcon, end: true },
   { to: '/directory', label: 'Directory', icon: UsersIcon },
   { to: '/groups', label: 'Groups', icon: GroupIcon },
-  { to: '/messages', label: 'Messages', icon: MailIcon },
+  { to: '/messages', label: 'Messages', icon: ChatBubbleIcon },
 ]
 
 const tabClasses = ({ isActive }) =>
