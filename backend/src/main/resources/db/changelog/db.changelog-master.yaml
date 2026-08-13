@@ -35,3 +35,6 @@ databaseChangeLog:
   - include:
       file: db/changelog/011-add-push-subscriptions.yaml
       relativeToChangelogFile: false
+  - include:
+      file: db/changelog/012-add-spring-session.yaml
+      relativeToChangelogFile: false

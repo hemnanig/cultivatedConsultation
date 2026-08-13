@@ -16,11 +16,16 @@ const features = [
   },
 ]
 
-export default function Login() {
+export default function Login({ sessionExpired = false }) {
   return (
     <div className="min-h-screen bg-stone-50">
       <div className="mx-auto flex min-h-screen max-w-5xl flex-col items-center gap-12 px-6 py-12 lg:flex-row lg:items-center lg:justify-between lg:gap-16">
         <div className="max-w-md">
+          {sessionExpired && (
+            <p className="mb-6 rounded-lg bg-status-pending-bg px-4 py-3 text-sm text-status-pending">
+              You were signed out — your session expired. Sign in again to continue.
+            </p>
+          )}
           <img className="mb-6 h-14 w-14" src={logo} alt="Cultivated Consultation" />
           <h1 className="font-display text-3xl font-semibold leading-tight text-stone-900 sm:text-4xl">
             A secure space for mental health professionals to connect

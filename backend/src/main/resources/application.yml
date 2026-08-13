@@ -6,6 +6,17 @@ spring:
   application:
     name: cultivated-consultation-backend
 
+  # Sessions in Postgres (schema: 012-add-spring-session.yaml), not JVM memory —
+  # otherwise every backend restart (Render redeploy, cold-start, crash) silently
+  # signs everyone out. initialize-schema: never because Liquibase owns the schema,
+  # same rule as every other table (see the jpa/liquibase comments below).
+  session:
+    store-type: jdbc
+    jdbc:
+      table-name: cultivated_consultation.spring_session
+      initialize-schema: never
+    timeout: 3d
+
   datasource:
     # currentSchema sets this connection's default search_path — belt-and-suspenders
     # alongside hibernate.default_schema below. Falls back to public only if
@@ -69,6 +80,11 @@ server:
         # the defaults below (Lax works fine — localhost:5173/8080 count as same-site).
         same-site: ${COOKIE_SAME_SITE:lax}
         secure: ${COOKIE_SECURE:false}
+        # Without an explicit max-age this is a browser-session cookie — gone the
+        # moment the browser/tab process fully closes, regardless of the server-side
+        # timeout above. Matches spring.session.timeout so "stay signed in" actually
+        # means 3 days, not "until you close the browser."
+        max-age: 3d
 
 app:
   # Comma-separated list of emails that get auto-approved + admin rights on first login.

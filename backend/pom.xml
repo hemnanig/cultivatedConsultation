@@ -51,6 +51,14 @@
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
         </dependency>
+        <!-- Sessions in Postgres, not JVM memory — an in-memory HttpSession is wiped on
+             every restart (Render redeploy, cold-start after idle, crash), forcing every
+             logged-in member to sign in again. Backed by the schema in
+             013-add-spring-session.yaml. -->
+        <dependency>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session-jdbc</artifactId>
+        </dependency>
         <!-- Web Push (VAPID + RFC 8291 payload encryption) for browser push notifications.
              See PushNotificationService. -->
         <dependency>

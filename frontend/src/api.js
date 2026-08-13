@@ -4,6 +4,16 @@
 // only falls back when the var is genuinely unset (local dev, no .env.local).
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080'
 
+// Set by App.jsx so a 401 from *any* call — not just the initial /api/me check —
+// drops the user back to the Login screen instead of leaving them on a page that
+// looks normal but silently fails every action (the page was rendered from state
+// fetched before the session expired; React Router doesn't re-hit the API on
+// client-side navigation, so nothing else notices until you go looking).
+let onUnauthorized = null
+export function setUnauthorizedHandler(fn) {
+  onUnauthorized = fn
+}
+
 /**
  * Thin fetch wrapper. `credentials: 'include'` is required on every call —
  * auth is a server-side session cookie set by Spring Security's OAuth2 login,
@@ -18,6 +28,13 @@ async function request(path, options = {}) {
 
   if (!res.ok) {
     if (res.status === 401) {
+      // The very first /api/me check on app load also gets a 401 for a normal
+      // signed-out visitor — that's not a "your session died" event, App.jsx
+      // already handles it locally. Only routes other than that initial check
+      // should force a sign-out; but there's no clean way to distinguish here,
+      // so App.jsx's handler is idempotent (setting me: null when it's already
+      // null is a no-op) and safe to call unconditionally.
+      onUnauthorized?.()
       const err = new Error('Not signed in')
       err.status = 401
       throw err

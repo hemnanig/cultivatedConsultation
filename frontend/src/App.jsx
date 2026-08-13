@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
-import { api } from './api.js'
+import { api, setUnauthorizedHandler } from './api.js'
 import Login from './pages/Login.jsx'
 import AuthCallback from './pages/AuthCallback.jsx'
 import Pending from './pages/Pending.jsx'
@@ -25,9 +25,25 @@ import { Spinner } from './components/ui.jsx'
 export default function App() {
   const [me, setMe] = useState(undefined) // undefined = loading, null = signed out
   const [loadError, setLoadError] = useState(null)
+  const [sessionExpired, setSessionExpired] = useState(false)
 
   useEffect(() => {
     refreshMe()
+
+    // A 401 from any API call, anywhere in the app — not just this initial
+    // check — means the session died server-side (timeout, or the backend
+    // restarted and lost its in-memory... well, JDBC-backed sessions now, but
+    // still: expired/invalid either way). Without this, a page rendered from
+    // state fetched before the session died looks completely normal and lets
+    // you click around, but every write 401s silently. Only flag it as an
+    // actual "session expired" notice if they were previously signed in —
+    // a signed-out visitor's first /api/me check also 401s and that's normal.
+    setUnauthorizedHandler(() => {
+      setMe((prev) => {
+        if (prev) setSessionExpired(true)
+        return null
+      })
+    })
   }, [])
 
   async function refreshMe() {
@@ -68,7 +84,7 @@ export default function App() {
       <Route path="/auth/callback" element={<AuthCallback onSignedIn={refreshMe} />} />
       {/* Works signed out — the one page anonymous visitors can reach. */}
       <Route path="/public-directory" element={<PublicDirectory me={me || null} />} />
-      {!me && <Route path="*" element={<Login />} />}
+      {!me && <Route path="*" element={<Login sessionExpired={sessionExpired} />} />}
       {me && me.membershipStatus !== 'APPROVED' && <Route path="*" element={<Pending me={me} onSignedOut={onSignedOut} />} />}
       {me && me.membershipStatus === 'APPROVED' && (
         <>
