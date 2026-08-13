@@ -34,6 +34,13 @@
     @apply px-3 py-1.5 text-sm;
   }
 
+  /* Minimal text-only action, used for LinkedIn-style engagement bar buttons (Reply, Cancel). */
+  .cc-btn-ghost {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium
+           text-stone-500 transition-colors hover:bg-stone-100 hover:text-stone-900
+           disabled:cursor-default disabled:opacity-50 disabled:hover:bg-transparent;
+  }
+
   .cc-input {
     @apply w-full rounded-lg border border-stone-300 px-3 py-2 text-sm text-stone-900
            placeholder:text-stone-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100;

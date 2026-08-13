@@ -4,7 +4,7 @@ import { api } from './api.js'
 import Login from './pages/Login.jsx'
 import AuthCallback from './pages/AuthCallback.jsx'
 import Pending from './pages/Pending.jsx'
-import Feed from './pages/Feed.jsx'
+import Home from './pages/Home.jsx'
 import About from './pages/About.jsx'
 import Directory from './pages/Directory.jsx'
 import Profile from './pages/Profile.jsx'
@@ -14,6 +14,10 @@ import GroupDetail from './pages/GroupDetail.jsx'
 import Messages from './pages/Messages.jsx'
 import MessageThread from './pages/MessageThread.jsx'
 import Notifications from './pages/Notifications.jsx'
+import Faq from './pages/Faq.jsx'
+import Contact from './pages/Contact.jsx'
+import PrivacyPolicy from './pages/PrivacyPolicy.jsx'
+import TermsOfService from './pages/TermsOfService.jsx'
 import { Spinner } from './components/ui.jsx'
 
 export default function App() {
@@ -64,7 +68,7 @@ export default function App() {
       {me && me.membershipStatus !== 'APPROVED' && <Route path="*" element={<Pending me={me} onSignedOut={onSignedOut} />} />}
       {me && me.membershipStatus === 'APPROVED' && (
         <>
-          <Route path="/" element={<Feed me={me} onSignedOut={onSignedOut} />} />
+          <Route path="/" element={<Home me={me} onSignedOut={onSignedOut} />} />
           <Route path="/directory" element={<Directory me={me} onSignedOut={onSignedOut} />} />
           <Route path="/groups" element={<Groups me={me} onSignedOut={onSignedOut} />} />
           <Route path="/groups/:groupId" element={<GroupDetail me={me} onSignedOut={onSignedOut} />} />
@@ -72,6 +76,10 @@ export default function App() {
           <Route path="/messages/:userId" element={<MessageThread me={me} onSignedOut={onSignedOut} />} />
           <Route path="/notifications" element={<Notifications me={me} onSignedOut={onSignedOut} />} />
           <Route path="/about" element={<About me={me} onSignedOut={onSignedOut} />} />
+          <Route path="/faq" element={<Faq me={me} onSignedOut={onSignedOut} />} />
+          <Route path="/contact" element={<Contact me={me} onSignedOut={onSignedOut} />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy me={me} onSignedOut={onSignedOut} />} />
+          <Route path="/terms-of-service" element={<TermsOfService me={me} onSignedOut={onSignedOut} />} />
           <Route path="/profile" element={<Profile me={me} onUpdated={refreshMe} onSignedOut={onSignedOut} />} />
           <Route path="/admin" element={<Admin me={me} onSignedOut={onSignedOut} />} />
           <Route path="*" element={<Navigate to="/" replace />} />

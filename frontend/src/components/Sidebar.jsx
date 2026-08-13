@@ -2,16 +2,25 @@ import { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import logo from '../assets/images/CC-1024-x-1024-px.png'
 import { Avatar } from './ui.jsx'
-import { HomeIcon, UsersIcon, GroupIcon, MailIcon, BellIcon, InfoIcon, ShieldIcon, LogOutIcon } from './icons.jsx'
+import { HomeIcon, UsersIcon, GroupIcon, MailIcon, BellIcon, ShieldIcon, LogOutIcon } from './icons.jsx'
 import { api } from '../api.js'
 
 const navItems = [
-  { to: '/', label: 'Feed', icon: HomeIcon, end: true },
+  { to: '/', label: 'Home', icon: HomeIcon, end: true },
   { to: '/directory', label: 'Directory', icon: UsersIcon },
   { to: '/groups', label: 'Groups', icon: GroupIcon },
   { to: '/messages', label: 'Messages', icon: MailIcon },
   { to: '/notifications', label: 'Notifications', icon: BellIcon },
-  { to: '/about', label: 'About', icon: InfoIcon },
+]
+
+// Secondary/legal links — LinkedIn-style small text footer at the bottom of
+// the sidebar rather than full nav items, since these aren't core features.
+const footerLinks = [
+  { to: '/about', label: 'About' },
+  { to: '/faq', label: 'FAQ' },
+  { to: '/contact', label: 'Contact' },
+  { to: '/privacy-policy', label: 'Privacy' },
+  { to: '/terms-of-service', label: 'Terms' },
 ]
 
 const linkClasses = ({ isActive }) =>
@@ -68,13 +77,22 @@ export default function Sidebar({ me, onSignedOut }) {
         )}
       </nav>
 
-      <button
-        onClick={logout}
-        className="mx-3 mb-5 mt-auto flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-stone-500 transition-colors hover:bg-stone-100 hover:text-stone-900"
-      >
-        <LogOutIcon className="h-5 w-5 shrink-0" />
-        Log out
-      </button>
+      <div className="mt-auto px-3 pb-5">
+        <button
+          onClick={logout}
+          className="mb-3 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-stone-500 transition-colors hover:bg-stone-100 hover:text-stone-900"
+        >
+          <LogOutIcon className="h-5 w-5 shrink-0" />
+          Log out
+        </button>
+        <nav className="flex flex-wrap gap-x-3 gap-y-1 px-3 text-xs text-stone-400">
+          {footerLinks.map(({ to, label }) => (
+            <NavLink key={to} to={to} className="hover:text-stone-600 hover:underline">
+              {label}
+            </NavLink>
+          ))}
+        </nav>
+      </div>
     </aside>
   )
 }

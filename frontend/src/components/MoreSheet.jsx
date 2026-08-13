@@ -2,14 +2,15 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../api.js'
 import { Avatar } from './ui.jsx'
-import { InfoIcon, ShieldIcon, LogOutIcon, BellIcon } from './icons.jsx'
+import { InfoIcon, ShieldIcon, LogOutIcon, BellIcon, QuestionIcon, EnvelopeIcon, LockIcon, DocumentIcon } from './icons.jsx'
 
 /**
  * Mobile-only overflow sheet for the bottom nav — everything that doesn't
- * fit in the 4 pinned tabs (Profile, Notifications, About, Admin, Log out).
- * This is the "in future we can add a More category" piece from the nav
- * redesign: rather than cramming a 5th+ icon into the bar, new sections go
- * here as the product grows.
+ * fit in the 4 pinned tabs (Profile, Notifications, About, FAQ, Contact,
+ * Privacy Policy, Terms of Service, Admin, Log out). This is the "in future
+ * we can add a More category" piece from the nav redesign: rather than
+ * cramming a 5th+ icon into the bar, new sections go here as the product
+ * grows.
  */
 export default function MoreSheet({ me, onSignedOut, onClose }) {
   const [unreadCount, setUnreadCount] = useState(0)
@@ -26,7 +27,7 @@ export default function MoreSheet({ me, onSignedOut, onClose }) {
   return (
     <div className="fixed inset-0 z-40 md:hidden">
       <div className="absolute inset-0 bg-stone-900/30" onClick={onClose} />
-      <div className="absolute inset-x-0 bottom-16 rounded-t-2xl bg-white p-3 shadow-lg">
+      <div className="absolute inset-x-0 bottom-16 max-h-[80vh] overflow-y-auto rounded-t-2xl bg-white p-3 shadow-lg">
         <Link
           to="/profile"
           onClick={onClose}
@@ -62,6 +63,42 @@ export default function MoreSheet({ me, onSignedOut, onClose }) {
         >
           <InfoIcon className="h-5 w-5 shrink-0" />
           About
+        </Link>
+
+        <Link
+          to="/faq"
+          onClick={onClose}
+          className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-stone-700 hover:bg-stone-50"
+        >
+          <QuestionIcon className="h-5 w-5 shrink-0" />
+          FAQ
+        </Link>
+
+        <Link
+          to="/contact"
+          onClick={onClose}
+          className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-stone-700 hover:bg-stone-50"
+        >
+          <EnvelopeIcon className="h-5 w-5 shrink-0" />
+          Contact
+        </Link>
+
+        <Link
+          to="/privacy-policy"
+          onClick={onClose}
+          className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-stone-700 hover:bg-stone-50"
+        >
+          <LockIcon className="h-5 w-5 shrink-0" />
+          Privacy Policy
+        </Link>
+
+        <Link
+          to="/terms-of-service"
+          onClick={onClose}
+          className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-stone-700 hover:bg-stone-50"
+        >
+          <DocumentIcon className="h-5 w-5 shrink-0" />
+          Terms of Service
         </Link>
 
         {me.admin && (

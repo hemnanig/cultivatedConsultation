@@ -7,7 +7,7 @@ import AppLayout from '../components/AppLayout.jsx'
 import { EmptyState, Spinner } from '../components/ui.jsx'
 import { SearchIcon } from '../components/icons.jsx'
 
-export default function Feed({ me, onSignedOut }) {
+export default function Home({ me, onSignedOut }) {
   const [posts, setPosts] = useState(null)
   const [error, setError] = useState(null)
   const [query, setQuery] = useState('')
@@ -32,9 +32,9 @@ export default function Feed({ me, onSignedOut }) {
 
   return (
     <AppLayout me={me} onSignedOut={onSignedOut}>
-      <main className="mx-auto flex max-w-3xl flex-col gap-4 px-4 py-8">
+      <main className="mx-auto flex max-w-3xl flex-col gap-3 px-4 py-8">
         <form onSubmit={submitSearch}>
-          <div className="flex items-center gap-2 rounded-lg border border-stone-300 bg-white px-3 py-2.5 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-100">
+          <div className="flex items-center gap-2 rounded-full border border-stone-300 bg-white px-4 py-2.5 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-100">
             <SearchIcon className="h-4 w-4 shrink-0 text-stone-400" />
             <input
               type="text"
@@ -46,7 +46,7 @@ export default function Feed({ me, onSignedOut }) {
           </div>
         </form>
 
-        <PostComposer createPost={api.createPost} onCreated={load} />
+        <PostComposer me={me} createPost={api.createPost} onCreated={load} />
 
         {error && (
           <p className="rounded-lg bg-status-denied-bg px-4 py-3 text-sm text-status-denied">{error}</p>

@@ -6,13 +6,13 @@ import MoreSheet from './MoreSheet.jsx'
 /**
  * Fixed bottom tab bar for mobile — LinkedIn-style: a handful of pinned
  * destinations, icon + label, active state highlighted. Capped at 4 content
- * tabs (Feed, Directory, Groups, Messages) plus a "More" tab for everything
- * else (Profile, Notifications, About, Admin, Log out) — this is the
- * overflow pattern the nav was designed to grow into rather than cramming
- * more icons into the bar as the product adds sections.
+ * tabs (Home, Directory, Groups, Messages) plus a "More" tab for everything
+ * else (Profile, Notifications, About, FAQ, Contact, legal, Admin, Log out)
+ * — this is the overflow pattern the nav was designed to grow into rather
+ * than cramming more icons into the bar as the product adds sections.
  */
 const tabs = [
-  { to: '/', label: 'Feed', icon: HomeIcon, end: true },
+  { to: '/', label: 'Home', icon: HomeIcon, end: true },
   { to: '/directory', label: 'Directory', icon: UsersIcon },
   { to: '/groups', label: 'Groups', icon: GroupIcon },
   { to: '/messages', label: 'Messages', icon: MailIcon },

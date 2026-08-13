@@ -209,6 +209,7 @@ export default function GroupDetail({ me, onSignedOut }) {
         </section>
 
         <PostComposer
+          me={me}
           createPost={(content) => api.createGroupPost(groupId, content)}
           onCreated={loadPosts}
           label="Post to this group"
