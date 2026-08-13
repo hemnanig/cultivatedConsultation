@@ -21,11 +21,28 @@ public class Dtos {
             String email,
             String name,
             String badge,
+            String bio,
+            String specialties,
             MembershipStatus membershipStatus,
             boolean admin
     ) {
         public static MeResponse from(AppUser u) {
-            return new MeResponse(u.getId(), u.getEmail(), u.getName(), u.getBadge(), u.getMembershipStatus(), u.isAdmin());
+            return new MeResponse(u.getId(), u.getEmail(), u.getName(), u.getBadge(), u.getBio(),
+                    u.getSpecialties(), u.getMembershipStatus(), u.isAdmin());
+        }
+    }
+
+    /** Own-profile edit. All fields optional/nullable — a user can update just one field at a time. */
+    public record UpdateProfileRequest(
+            @Size(max = 255) String badge,
+            @Size(max = 1000) String bio,
+            @Size(max = 500) String specialties
+    ) {}
+
+    /** Read-only view of another approved member, for the directory/search screen. */
+    public record MemberResponse(Long id, String name, String badge, String bio, String specialties) {
+        public static MemberResponse from(AppUser u) {
+            return new MemberResponse(u.getId(), u.getName(), u.getBadge(), u.getBio(), u.getSpecialties());
         }
     }
 

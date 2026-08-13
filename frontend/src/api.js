@@ -40,10 +40,13 @@ async function request(path, options = {}) {
 
 export const api = {
   me: () => request('/api/me'),
+  updateMe: (fields) => request('/api/me', { method: 'PATCH', body: JSON.stringify(fields) }),
   listPosts: () => request('/api/posts'),
   createPost: (content) => request('/api/posts', { method: 'POST', body: JSON.stringify({ content }) }),
   createReply: (postId, content) =>
     request(`/api/posts/${postId}/replies`, { method: 'POST', body: JSON.stringify({ content }) }),
+  listMembers: (specialty) =>
+    request(`/api/members${specialty ? `?specialty=${encodeURIComponent(specialty)}` : ''}`),
   pendingUsers: () => request('/api/admin/users/pending'),
   approveUser: (userId) => request(`/api/admin/users/${userId}/approve`, { method: 'POST' }),
   denyUser: (userId) => request(`/api/admin/users/${userId}/deny`, { method: 'POST' })

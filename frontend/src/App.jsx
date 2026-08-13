@@ -5,6 +5,11 @@ import Login from './pages/Login.jsx'
 import AuthCallback from './pages/AuthCallback.jsx'
 import Pending from './pages/Pending.jsx'
 import Feed from './pages/Feed.jsx'
+import About from './pages/About.jsx'
+import Directory from './pages/Directory.jsx'
+import Profile from './pages/Profile.jsx'
+import Admin from './pages/Admin.jsx'
+import { Spinner } from './components/ui.jsx'
 
 export default function App() {
   const [me, setMe] = useState(undefined) // undefined = loading, null = signed out
@@ -28,25 +33,36 @@ export default function App() {
   }
 
   if (loadError) {
-    return <div className="page-centered">Something went wrong talking to the server: {loadError}</div>
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-stone-50 px-6 text-center text-stone-600">
+        Something went wrong talking to the server: {loadError}
+      </div>
+    )
   }
 
   if (me === undefined) {
-    return <div className="page-centered">Loading…</div>
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-stone-50">
+        <Spinner label="Loading…" />
+      </div>
+    )
   }
 
   return (
     <Routes>
-      <Route path="/" element={me ? <Gate me={me} /> : <Login />} />
       <Route path="/auth/callback" element={<AuthCallback onSignedIn={refreshMe} />} />
-      <Route path="*" element={<Navigate to="/" replace />} />
+      {!me && <Route path="*" element={<Login />} />}
+      {me && me.membershipStatus !== 'APPROVED' && <Route path="*" element={<Pending me={me} />} />}
+      {me && me.membershipStatus === 'APPROVED' && (
+        <>
+          <Route path="/" element={<Feed me={me} />} />
+          <Route path="/directory" element={<Directory me={me} />} />
+          <Route path="/about" element={<About me={me} />} />
+          <Route path="/profile" element={<Profile me={me} onUpdated={refreshMe} />} />
+          <Route path="/admin" element={<Admin me={me} />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </>
+      )}
     </Routes>
   )
-}
-
-function Gate({ me }) {
-  if (me.membershipStatus === 'APPROVED') {
-    return <Feed me={me} />
-  }
-  return <Pending me={me} />
 }

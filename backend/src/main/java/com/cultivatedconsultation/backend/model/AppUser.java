@@ -30,6 +30,15 @@ public class AppUser {
     // Free-text for the POC. Real credential-verified badges come later per the product brief.
     private String badge;
 
+    // Free-text bio shown on the member's profile.
+    @Column(length = 1000)
+    private String bio;
+
+    // Comma-separated specialty/interest tags (e.g. "Perinatal Mental Health, Trauma, EMDR").
+    // A proper normalized tag table is overkill for the POC's directory search.
+    @Column(length = 500)
+    private String specialties;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "membership_status", nullable = false)
     private MembershipStatus membershipStatus = MembershipStatus.PENDING;

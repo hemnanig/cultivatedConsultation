@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 005-add-profile-fields-to-app-user
+      author: cultivated-consultation
+      changes:
+        - addColumn:
+            schemaName: cultivated_consultation
+            tableName: app_user
+            columns:
+              - column:
+                  name: bio
+                  type: VARCHAR(1000)
+              - column:
+                  name: specialties
+                  type: VARCHAR(500)

@@ -78,9 +78,8 @@ Visit `http://localhost:5173`. Sign in with a Google account whose email is in `
 
 ### 5. Approving a test user
 
-No admin UI yet — for the POC, either:
 - Add your test account's email to `APP_ADMIN_EMAILS` (auto-approves on first login), or
-- Sign in as an admin account and call `POST /api/admin/users/{id}/approve` (get the id from `GET /api/admin/users/pending`).
+- Sign in as an admin account and visit `/admin` in the app — it lists pending applications with Approve/Deny buttons (calls the same `POST /api/admin/users/{id}/approve` / `/deny` endpoints as before, just with a UI now).
 
 ## Database migrations (Liquibase)
 
@@ -133,6 +132,10 @@ Don't set `PORT` — Render sets that automatically and `application.yml` alread
 
 **Local dev is unaffected** — `frontend/` and `backend/` still run as two separate dev servers locally (`npm run dev` on 5173, Spring Boot on 8080), talking cross-origin the way they always have; that's why the CORS config and `VITE_API_BASE_URL` in `.env.local` still exist. The combined Dockerfile is a production-only build path.
 
+## What's built beyond the original 2-feature POC
+
+Design system (Tailwind + design tokens), an About page with founder bio/mission content, member profiles (badge/bio/specialties), a member directory with specialty search, and an admin approval UI — see `cultivated-consultation-ui-ux-and-roadmap.md` (shared separately) for the full assessment this was built from.
+
 ## What's deliberately not built yet
 
-Groups, anonymous posting, payments/subscriptions, university roster management, public directory, credential verification, push notifications, PWA manifest. See the product requirements brief in the project knowledge for the full picture — this repo is Phase 0/POC only.
+Groups (including the "avoid dual relationships" targeted-group feature from the live site), anonymous posting, payments/subscriptions, university roster management, real credential *verification* (license upload + admin review — badge is still self-reported), direct messaging, notifications, push notifications, PWA manifest. See the product requirements brief in the project knowledge for the full picture.

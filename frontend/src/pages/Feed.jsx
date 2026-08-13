@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { api } from '../api.js'
 import PostComposer from '../components/PostComposer.jsx'
 import PostList from '../components/PostList.jsx'
-import logo from '../assets/images/CC-1024-x-1024-px.png'
+import NavBar from '../components/NavBar.jsx'
+import { EmptyState, Spinner } from '../components/ui.jsx'
 
 export default function Feed({ me }) {
   const [posts, setPosts] = useState(null)
@@ -21,21 +22,27 @@ export default function Feed({ me }) {
   }
 
   return (
-    <div className="page">
-      <header className="topbar">
-        <div className="topbar-brand">
-          <img className="logo logo-small" src={logo} alt="Cultivated Consultation" />
-          <span className="topbar-title">Cultivated Consultation</span>
-        </div>
-        <div className="topbar-user">{me.name || me.email}{me.badge ? ` · ${me.badge}` : ''}</div>
-      </header>
+    <div className="min-h-screen bg-stone-50">
+      <NavBar me={me} />
 
-      <main className="feed">
+      <main className="mx-auto flex max-w-3xl flex-col gap-4 px-4 py-8">
         <PostComposer onCreated={load} />
-        {error && <p className="error">{error}</p>}
-        {posts === null && !error && <p className="muted">Loading posts…</p>}
-        {posts && posts.length === 0 && <p className="muted">No consultation questions yet — be the first to ask one.</p>}
-        {posts && <PostList posts={posts} onChanged={load} />}
+
+        {error && (
+          <p className="rounded-lg bg-status-denied-bg px-4 py-3 text-sm text-status-denied">{error}</p>
+        )}
+
+        {posts === null && !error && <Spinner label="Loading posts…" />}
+
+        {posts && posts.length === 0 && (
+          <EmptyState
+            icon="💬"
+            title="No consultation questions yet"
+            description="Be the first to ask one — remember to keep it de-identified."
+          />
+        )}
+
+        {posts && posts.length > 0 && <PostList posts={posts} onChanged={load} />}
       </main>
     </div>
   )
