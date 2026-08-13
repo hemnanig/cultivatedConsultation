@@ -1,8 +1,7 @@
-import { useState } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import logo from '../assets/images/CC-1024-x-1024-px.png'
 import { Avatar } from './ui.jsx'
-import { HomeIcon, UsersIcon, InfoIcon, ShieldIcon, SearchIcon, LogOutIcon } from './icons.jsx'
+import { HomeIcon, UsersIcon, InfoIcon, ShieldIcon, LogOutIcon } from './icons.jsx'
 import { api } from '../api.js'
 
 const navItems = [
@@ -16,14 +15,6 @@ const linkClasses = ({ isActive }) =>
   (isActive ? 'bg-brand-50 text-brand-700' : 'text-stone-600 hover:bg-stone-100 hover:text-stone-900')
 
 export default function Sidebar({ me, onSignedOut }) {
-  const navigate = useNavigate()
-  const [query, setQuery] = useState('')
-
-  function submitSearch(e) {
-    e.preventDefault()
-    navigate(`/directory?q=${encodeURIComponent(query.trim())}`)
-  }
-
   async function logout() {
     await api.logout()
     onSignedOut()
@@ -46,19 +37,6 @@ export default function Sidebar({ me, onSignedOut }) {
           {me.badge && <p className="truncate text-xs text-stone-500">{me.badge}</p>}
         </div>
       </NavLink>
-
-      <form onSubmit={submitSearch} className="mx-3 mb-4">
-        <div className="flex items-center gap-2 rounded-lg border border-stone-300 bg-stone-50 px-3 py-2 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-100">
-          <SearchIcon className="h-4 w-4 shrink-0 text-stone-400" />
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search members…"
-            className="w-full bg-transparent text-sm text-stone-900 placeholder:text-stone-400 focus:outline-none"
-          />
-        </div>
-      </form>
 
       <nav className="flex flex-col gap-1 px-3">
         {navItems.map(({ to, label, icon: Icon, end }) => (
