@@ -13,6 +13,8 @@ import com.cultivatedconsultation.backend.model.NotificationType;
 import com.cultivatedconsultation.backend.model.Opportunity;
 import com.cultivatedconsultation.backend.model.OpportunityType;
 import com.cultivatedconsultation.backend.model.Post;
+import com.cultivatedconsultation.backend.model.Reaction;
+import com.cultivatedconsultation.backend.model.ReactionType;
 import com.cultivatedconsultation.backend.model.Reply;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -20,6 +22,8 @@ import jakarta.validation.constraints.Size;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * All request/response shapes live here for now — split into separate files once
@@ -114,21 +118,22 @@ public class Dtos {
         }
     }
 
-    public record ReplyResponse(Long id, AuthorSummary author, String content, Instant createdAt) {
-        public static ReplyResponse from(Reply r) {
-            return new ReplyResponse(r.getId(), AuthorSummary.from(r.getAuthor()), r.getContent(), r.getCreatedAt());
+    public record ReplyResponse(Long id, AuthorSummary author, String content, Instant createdAt, ReactionSummary reactions) {
+        public static ReplyResponse from(Reply r, ReactionSummary reactions) {
+            return new ReplyResponse(r.getId(), AuthorSummary.from(r.getAuthor()), r.getContent(), r.getCreatedAt(), reactions);
         }
     }
 
     public record PostResponse(
-            Long id, AuthorSummary author, String content, Instant createdAt, List<ReplyResponse> replies, boolean anonymous
+            Long id, AuthorSummary author, String content, Instant createdAt, List<ReplyResponse> replies,
+            boolean anonymous, ReactionSummary reactions
     ) {
         /**
          * viewer decides whether an anonymous post's real author is revealed:
          * admins and the author themselves see it, everyone else sees the
          * masked AuthorSummary. Non-anonymous posts always reveal.
          */
-        public static PostResponse from(Post p, AppUser viewer) {
+        public static PostResponse from(Post p, AppUser viewer, ReactionSummary reactions, List<ReplyResponse> replyResponses) {
             boolean revealIdentity = !p.isAnonymous() || viewer.isAdmin() || p.getAuthor().getId().equals(viewer.getId());
             AuthorSummary author = revealIdentity
                     ? AuthorSummary.from(p.getAuthor())
@@ -138,9 +143,36 @@ public class Dtos {
                     author,
                     p.getContent(),
                     p.getCreatedAt(),
-                    p.getReplies().stream().map(ReplyResponse::from).toList(),
-                    p.isAnonymous()
+                    replyResponses,
+                    p.isAnonymous(),
+                    reactions
             );
+        }
+    }
+
+    public record ReactRequest(@NotNull ReactionType type) {}
+
+    /**
+     * Reaction counts per type plus which one (if any) the requesting viewer
+     * picked — everything a client needs to render the emoji tally and
+     * highlight the viewer's own reaction without a second round trip.
+     */
+    public record ReactionSummary(Map<ReactionType, Long> counts, long total, ReactionType myReaction) {
+        private static final ReactionSummary EMPTY = new ReactionSummary(Map.of(), 0, null);
+
+        public static ReactionSummary empty() {
+            return EMPTY;
+        }
+
+        public static ReactionSummary from(List<Reaction> reactions, AppUser viewer) {
+            Map<ReactionType, Long> counts = reactions.stream()
+                    .collect(Collectors.groupingBy(Reaction::getType, Collectors.counting()));
+            ReactionType mine = reactions.stream()
+                    .filter(r -> r.getUser().getId().equals(viewer.getId()))
+                    .map(Reaction::getType)
+                    .findFirst()
+                    .orElse(null);
+            return new ReactionSummary(counts, reactions.size(), mine);
         }
     }
 

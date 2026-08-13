@@ -38,3 +38,6 @@ databaseChangeLog:
   - include:
       file: db/changelog/012-add-spring-session.yaml
       relativeToChangelogFile: false
+  - include:
+      file: db/changelog/013-add-reactions.yaml
+      relativeToChangelogFile: false

@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { Avatar, BadgePill } from './ui.jsx'
 import { ChatBubbleIcon, IncognitoIcon } from './icons.jsx'
+import ReactionBar from './ReactionBar.jsx'
 import { formatRelativeTime } from '../lib/format.js'
+import { api } from '../api.js'
 
 /**
  * Shared by the public feed and group feeds — createReply is injected (takes
@@ -76,7 +78,12 @@ function PostItem({ post, onChanged, createReply }) {
         </div>
       </div>
 
-      <div className="mt-3 flex items-center border-t border-stone-100 pt-1.5">
+      <div className="mt-3 flex items-center gap-1 border-t border-stone-100 pt-1.5">
+        <ReactionBar
+          reactions={post.reactions}
+          onReact={(type) => api.reactToPost(post.id, type)}
+          onUnreact={() => api.removePostReaction(post.id)}
+        />
         <button type="button" className="cc-btn-ghost" onClick={() => setOpen((o) => !o)}>
           <ChatBubbleIcon className="h-4 w-4" />
           {replyCount > 0 ? `${replyCount} ${replyCount === 1 ? 'reply' : 'replies'}` : 'Reply'}
@@ -97,6 +104,11 @@ function PostItem({ post, onChanged, createReply }) {
                       <span className="text-xs text-stone-400">· {formatRelativeTime(reply.createdAt)}</span>
                     </div>
                     <p className="text-sm text-stone-700">{reply.content}</p>
+                    <ReactionBar
+                      reactions={reply.reactions}
+                      onReact={(type) => api.reactToReply(reply.id, type)}
+                      onUnreact={() => api.removeReplyReaction(reply.id)}
+                    />
                   </div>
                 </li>
               ))}

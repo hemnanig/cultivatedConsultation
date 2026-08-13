@@ -174,3 +174,50 @@
            placeholder:text-stone-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/25;
   }
 }
+
+/*
+ * Reaction-picker animations (ReactionBar). Plain keyframes rather than
+ * @apply/Tailwind utilities so they can't collide with utility classes
+ * applied to the same element for color/transform (see ReactionBar.jsx,
+ * which uses inline styles for the reacted color for the same reason).
+ */
+@keyframes cc-tray-in {
+  0% { opacity: 0; transform: translateY(8px) scale(0.85); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes cc-emoji-pop-in {
+  0% { opacity: 0; transform: translateY(6px) scale(0.4); }
+  60% { opacity: 1; transform: translateY(-3px) scale(1.15); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes cc-reaction-bounce {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.4); }
+  60% { transform: scale(0.92); }
+  100% { transform: scale(1); }
+}
+
+@keyframes cc-reaction-float-up {
+  0% { opacity: 1; transform: translate(-50%, 0) scale(0.7); }
+  25% { opacity: 1; transform: translate(-50%, -10px) scale(1.3); }
+  100% { opacity: 0; transform: translate(-50%, -38px) scale(1); }
+}
+
+.cc-reaction-tray {
+  transform-origin: bottom left;
+  animation: cc-tray-in 140ms ease-out;
+}
+
+.cc-reaction-emoji-pop {
+  animation: cc-emoji-pop-in 260ms cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+
+.cc-reaction-bounce {
+  animation: cc-reaction-bounce 320ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.cc-reaction-burst {
+  animation: cc-reaction-float-up 700ms ease-out forwards;
+}

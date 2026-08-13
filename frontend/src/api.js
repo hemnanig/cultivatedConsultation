@@ -66,6 +66,12 @@ export const api = {
     request('/api/posts', { method: 'POST', body: JSON.stringify({ content, anonymous }) }),
   createReply: (postId, content) =>
     request(`/api/posts/${postId}/replies`, { method: 'POST', body: JSON.stringify({ content }) }),
+  reactToPost: (postId, type) =>
+    request(`/api/posts/${postId}/reaction`, { method: 'PUT', body: JSON.stringify({ type }) }),
+  removePostReaction: (postId) => request(`/api/posts/${postId}/reaction`, { method: 'DELETE' }),
+  reactToReply: (replyId, type) =>
+    request(`/api/replies/${replyId}/reaction`, { method: 'PUT', body: JSON.stringify({ type }) }),
+  removeReplyReaction: (replyId) => request(`/api/replies/${replyId}/reaction`, { method: 'DELETE' }),
   listMembers: (specialty) =>
     request(`/api/members${specialty ? `?specialty=${encodeURIComponent(specialty)}` : ''}`),
   pendingUsers: () => request('/api/admin/users/pending'),

@@ -10,6 +10,7 @@ import com.cultivatedconsultation.backend.repository.PostRepository;
 import com.cultivatedconsultation.backend.repository.ReplyRepository;
 import com.cultivatedconsultation.backend.security.CurrentUserService;
 import com.cultivatedconsultation.backend.service.NotificationService;
+import com.cultivatedconsultation.backend.service.ReactionService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Feature 2 of the POC: the consultation feed. Every endpoint here requires
@@ -30,21 +32,22 @@ public class PostController {
     private final ReplyRepository replyRepository;
     private final CurrentUserService currentUserService;
     private final NotificationService notificationService;
+    private final ReactionService reactionService;
 
     public PostController(PostRepository postRepository, ReplyRepository replyRepository,
-                           CurrentUserService currentUserService, NotificationService notificationService) {
+                           CurrentUserService currentUserService, NotificationService notificationService,
+                           ReactionService reactionService) {
         this.postRepository = postRepository;
         this.replyRepository = replyRepository;
         this.currentUserService = currentUserService;
         this.notificationService = notificationService;
+        this.reactionService = reactionService;
     }
 
     @GetMapping
     public List<PostResponse> list(Authentication authentication) {
         AppUser me = requireApproved(authentication);
-        return postRepository.findAllWithAuthorOrderByCreatedAtDesc().stream()
-                .map(p -> PostResponse.from(p, me))
-                .toList();
+        return assemble(postRepository.findAllWithAuthorOrderByCreatedAtDesc(), me);
     }
 
     @PostMapping
@@ -55,7 +58,8 @@ public class PostController {
         post.setAuthor(author);
         post.setContent(request.content());
         post.setAnonymous(request.anonymous());
-        return PostResponse.from(postRepository.save(post), author);
+        Post saved = postRepository.save(post);
+        return PostResponse.from(saved, author, ReactionSummary.empty(), List.of());
     }
 
     @PostMapping("/{postId}/replies")
@@ -69,7 +73,7 @@ public class PostController {
         reply.setPost(post);
         reply.setAuthor(author);
         reply.setContent(request.content());
-        ReplyResponse response = ReplyResponse.from(replyRepository.save(reply));
+        ReplyResponse response = ReplyResponse.from(replyRepository.save(reply), ReactionSummary.empty());
 
         if (!post.getAuthor().getId().equals(author.getId())) {
             notificationService.notify(post.getAuthor(), NotificationType.NEW_REPLY,
@@ -77,6 +81,26 @@ public class PostController {
         }
 
         return response;
+    }
+
+    // Shared with GroupController.posts()/createPost() — reactions are batched
+    // in one query per feed page rather than one per post/reply.
+    static List<PostResponse> assemble(List<Post> posts, AppUser me, ReactionService reactionService) {
+        List<Reply> allReplies = posts.stream().flatMap(p -> p.getReplies().stream()).toList();
+        Map<Long, ReactionSummary> postReactions = reactionService.summarizeForPosts(posts, me);
+        Map<Long, ReactionSummary> replyReactions = reactionService.summarizeForReplies(allReplies, me);
+        return posts.stream()
+                .map(p -> {
+                    List<ReplyResponse> replyResponses = p.getReplies().stream()
+                            .map(r -> ReplyResponse.from(r, replyReactions.getOrDefault(r.getId(), ReactionSummary.empty())))
+                            .toList();
+                    return PostResponse.from(p, me, postReactions.getOrDefault(p.getId(), ReactionSummary.empty()), replyResponses);
+                })
+                .toList();
+    }
+
+    private List<PostResponse> assemble(List<Post> posts, AppUser me) {
+        return assemble(posts, me, reactionService);
     }
 
     private AppUser requireApproved(Authentication authentication) {

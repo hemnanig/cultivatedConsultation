@@ -1,0 +1,65 @@
+databaseChangeLog:
+  - changeSet:
+      id: 018-create-reaction
+      author: cultivated-consultation
+      changes:
+        - createTable:
+            schemaName: cultivated_consultation
+            tableName: reaction
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              # Exactly one of post_id/reply_id is set — see the check
+              # constraint below. Reactions on a post and reactions on one of
+              # its replies are separate rows.
+              - column:
+                  name: post_id
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+                    foreignKeyName: fk_reaction_post
+                    references: cultivated_consultation.post(id)
+              - column:
+                  name: reply_id
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+                    foreignKeyName: fk_reaction_reply
+                    references: cultivated_consultation.reply(id)
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_reaction_user
+                    references: cultivated_consultation.app_user(id)
+              - column:
+                  name: type
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP WITH TIME ZONE
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            schemaName: cultivated_consultation
+            tableName: reaction
+            columnNames: post_id, user_id
+            constraintName: uq_reaction_post_user
+        - addUniqueConstraint:
+            schemaName: cultivated_consultation
+            tableName: reaction
+            columnNames: reply_id, user_id
+            constraintName: uq_reaction_reply_user
+        - sql:
+            sql: >-
+              ALTER TABLE cultivated_consultation.reaction
+              ADD CONSTRAINT ck_reaction_target
+              CHECK ((post_id IS NOT NULL AND reply_id IS NULL) OR (post_id IS NULL AND reply_id IS NOT NULL))

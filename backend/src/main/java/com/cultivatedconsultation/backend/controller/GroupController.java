@@ -5,6 +5,7 @@ import com.cultivatedconsultation.backend.model.*;
 import com.cultivatedconsultation.backend.repository.*;
 import com.cultivatedconsultation.backend.security.CurrentUserService;
 import com.cultivatedconsultation.backend.service.NotificationService;
+import com.cultivatedconsultation.backend.service.ReactionService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -33,6 +34,7 @@ public class GroupController {
     private final ReplyRepository replyRepository;
     private final CurrentUserService currentUserService;
     private final NotificationService notificationService;
+    private final ReactionService reactionService;
 
     public GroupController(ConsultationGroupRepository groupRepository,
                             GroupMembershipRepository membershipRepository,
@@ -40,7 +42,8 @@ public class GroupController {
                             PostRepository postRepository,
                             ReplyRepository replyRepository,
                             CurrentUserService currentUserService,
-                            NotificationService notificationService) {
+                            NotificationService notificationService,
+                            ReactionService reactionService) {
         this.groupRepository = groupRepository;
         this.membershipRepository = membershipRepository;
         this.appUserRepository = appUserRepository;
@@ -48,6 +51,7 @@ public class GroupController {
         this.replyRepository = replyRepository;
         this.currentUserService = currentUserService;
         this.notificationService = notificationService;
+        this.reactionService = reactionService;
     }
 
     @GetMapping
@@ -154,9 +158,8 @@ public class GroupController {
         AppUser me = requireApproved(authentication);
         ConsultationGroup group = findGroup(groupId);
         requireMembership(me, group);
-        return postRepository.findByGroupWithAuthorOrderByCreatedAtDesc(group).stream()
-                .map(p -> PostResponse.from(p, me))
-                .toList();
+        List<Post> posts = postRepository.findByGroupWithAuthorOrderByCreatedAtDesc(group);
+        return PostController.assemble(posts, me, reactionService);
     }
 
     @PostMapping("/{groupId}/posts")
@@ -174,7 +177,8 @@ public class GroupController {
         post.setAuthor(me);
         post.setContent(request.content());
         post.setGroup(group);
-        return PostResponse.from(postRepository.save(post), me);
+        Post saved = postRepository.save(post);
+        return PostResponse.from(saved, me, ReactionSummary.empty(), List.of());
     }
 
     @PostMapping("/{groupId}/posts/{postId}/replies")
@@ -195,7 +199,7 @@ public class GroupController {
         reply.setPost(post);
         reply.setAuthor(me);
         reply.setContent(request.content());
-        ReplyResponse response = ReplyResponse.from(replyRepository.save(reply));
+        ReplyResponse response = ReplyResponse.from(replyRepository.save(reply), ReactionSummary.empty());
 
         if (!post.getAuthor().getId().equals(me.getId())) {
             notificationService.notify(post.getAuthor(), NotificationType.NEW_REPLY,
