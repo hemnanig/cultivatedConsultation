@@ -83,7 +83,7 @@ export default function App() {
     <Routes>
       <Route path="/auth/callback" element={<AuthCallback onSignedIn={refreshMe} />} />
       {/* Works signed out — the one page anonymous visitors can reach. */}
-      <Route path="/public-directory" element={<PublicDirectory me={me || null} />} />
+      <Route path="/public-directory" element={<PublicDirectory me={me || null} onSignedOut={onSignedOut} />} />
       {!me && <Route path="*" element={<Login sessionExpired={sessionExpired} />} />}
       {me && me.membershipStatus !== 'APPROVED' && <Route path="*" element={<Pending me={me} onSignedOut={onSignedOut} />} />}
       {me && me.membershipStatus === 'APPROVED' && (
