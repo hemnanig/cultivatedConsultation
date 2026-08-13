@@ -91,7 +91,7 @@ export default function MessageThread({ me, onSignedOut }) {
                   <li key={m.id} className={'flex ' + (fromMe ? 'justify-end' : 'justify-start')}>
                     <div className={'max-w-[75%] rounded-2xl px-3.5 py-2 text-sm ' + (fromMe ? 'bg-brand-600 text-white' : 'bg-stone-100 text-stone-900')}>
                       <p className="whitespace-pre-wrap">{m.content}</p>
-                      <p className={'mt-0.5 text-[11px] ' + (fromMe ? 'text-brand-100' : 'text-stone-400')}>
+                      <p className={'mt-0.5 text-[11px] ' + (fromMe ? 'text-white/75' : 'text-stone-400')}>
                         {formatRelativeTime(m.createdAt)}
                       </p>
                     </div>

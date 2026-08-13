@@ -2,6 +2,109 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * "Warm clinical editorial" palette — a warm cream/ink neutral ramp instead
+ * of flat gray, the existing deep teal as primary accent, and a new clay/
+ * terracotta secondary accent used deliberately (credential-tier variety,
+ * a couple of purposeful highlights) rather than sprayed across every
+ * element. Dark mode isn't a filtered/inverted version of light mode — each
+ * ramp has its own hand-picked dark values so it still reads as warm rather
+ * than a generic near-black SaaS dark mode.
+ *
+ * Shade *roles* stay consistent across both themes even though the literal
+ * lightness direction flips: 50/100 is always the recessive/soft-fill end
+ * (pale mint tint in light mode, dark ink tint in dark mode), 900 is always
+ * the highest-emphasis/foreground end. That's what lets every existing
+ * bg-brand-50 + text-brand-700 pairing in the app keep working unmodified.
+ */
+:root {
+  --stone-50: #faf6ef;
+  --stone-100: #f3eee1;
+  --stone-200: #e7dfcb;
+  --stone-300: #d6c9ac;
+  --stone-400: #a79e88;
+  --stone-500: #8a8371;
+  --stone-600: #6b6355;
+  --stone-700: #55503f;
+  --stone-800: #3a362b;
+  --stone-900: #2a2620;
+
+  --brand-50: #eef4f2;
+  --brand-100: #d7e6e2;
+  --brand-200: #b0cdc5;
+  --brand-300: #84b0a4;
+  --brand-400: #598f80;
+  --brand-500: #3c6d61;
+  --brand-600: #2d4f4a;
+  --brand-700: #25403c;
+  --brand-800: #1e3330;
+  --brand-900: #152624;
+
+  --clay-50: #fbeee7;
+  --clay-100: #f6e4db;
+  --clay-200: #edc7b0;
+  --clay-300: #e0a47f;
+  --clay-400: #d0824f;
+  --clay-500: #c1653f;
+  --clay-600: #a6532f;
+  --clay-700: #8a3d1f;
+  --clay-800: #6b2e17;
+  --clay-900: #4a1f0f;
+
+  --surface: #ffffff;
+
+  --status-pending: #b7791f;
+  --status-pending-bg: #fbf3e2;
+  --status-approved: #2f7d4f;
+  --status-approved-bg: #e8f5ec;
+  --status-denied: #b3261e;
+  --status-denied-bg: #fbeae9;
+}
+
+.dark {
+  --stone-50: #171d1a;
+  --stone-100: #1f2621;
+  --stone-200: #2c352f;
+  --stone-300: #3a443c;
+  --stone-400: #78877d;
+  --stone-500: #93a197;
+  --stone-600: #aeb9a9;
+  --stone-700: #c7d0c2;
+  --stone-800: #e1e6db;
+  --stone-900: #f4f1e8;
+
+  --brand-50: #17251f;
+  --brand-100: #1e2f28;
+  --brand-200: #294238;
+  --brand-300: #3a5c4c;
+  --brand-400: #4f7a64;
+  --brand-500: #6b9c89;
+  --brand-600: #4aae8b;
+  --brand-700: #8fd8b9;
+  --brand-800: #c3ecd9;
+  --brand-900: #e3f7ec;
+
+  --clay-50: #241811;
+  --clay-100: #2f1f16;
+  --clay-200: #472d1d;
+  --clay-300: #6b4128;
+  --clay-400: #8f5734;
+  --clay-500: #b87445;
+  --clay-600: #d98f5c;
+  --clay-700: #edaf80;
+  --clay-800: #f5cba8;
+  --clay-900: #fbe6d2;
+
+  --surface: #1f2822;
+
+  --status-pending: #e8b563;
+  --status-pending-bg: #332711;
+  --status-approved: #74cb9a;
+  --status-approved-bg: #16301f;
+  --status-denied: #e38a83;
+  --status-denied-bg: #3a1a17;
+}
+
 @layer base {
   html {
     @apply bg-stone-50 text-stone-900;
@@ -14,7 +117,7 @@
 @layer components {
   /* Base card shell used across every screen. */
   .cc-card {
-    @apply bg-white border border-stone-200 rounded-xl shadow-sm;
+    @apply bg-surface border border-stone-200 rounded-xl shadow-sm;
   }
 
   /* Primary action button. */
@@ -25,9 +128,18 @@
   }
 
   .cc-btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-stone-300 bg-white px-4 py-2.5
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-stone-300 bg-surface px-4 py-2.5
            text-sm font-medium text-stone-700 transition-colors hover:bg-stone-50
            disabled:cursor-default disabled:opacity-50;
+  }
+
+  /* Secondary accent action — clay, not teal. Reserved for the one or two
+     highlight moments per screen (see design notes), never the default
+     button, so the accent stays meaningful instead of becoming wallpaper. */
+  .cc-btn-clay {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-clay-600 px-4 py-2.5
+           text-sm font-medium text-white transition-colors hover:bg-clay-700
+           disabled:cursor-default disabled:opacity-50 disabled:hover:bg-clay-600;
   }
 
   .cc-btn-sm {
@@ -42,7 +154,7 @@
   }
 
   .cc-input {
-    @apply w-full rounded-lg border border-stone-300 px-3 py-2 text-sm text-stone-900
-           placeholder:text-stone-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100;
+    @apply w-full rounded-lg border border-stone-300 bg-surface px-3 py-2 text-sm text-stone-900
+           placeholder:text-stone-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/25;
   }
 }

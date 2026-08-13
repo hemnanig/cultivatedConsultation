@@ -27,7 +27,7 @@ export default function BottomNav({ me, onSignedOut }) {
 
   return (
     <>
-      <nav className="fixed inset-x-0 bottom-0 z-30 flex h-16 items-stretch border-t border-stone-200 bg-white md:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-30 flex h-16 items-stretch border-t border-stone-200 bg-surface md:hidden">
         {tabs.map(({ to, label, icon: Icon, end }) => (
           <NavLink key={to} to={to} end={end} className={tabClasses}>
             <Icon className="h-5 w-5" />

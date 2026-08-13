@@ -73,7 +73,7 @@ export default function Notifications({ me, onSignedOut }) {
                   onClick={() => open(n)}
                   className={
                     'flex w-full items-start gap-3 rounded-xl border p-4 text-left transition-colors ' +
-                    (n.read ? 'border-stone-200 bg-white hover:bg-stone-50' : 'border-brand-200 bg-brand-50 hover:bg-brand-100')
+                    (n.read ? 'border-stone-200 bg-surface hover:bg-stone-50' : 'border-brand-200 bg-brand-50 hover:bg-brand-100')
                   }
                 >
                   {!n.read && <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-brand-600" aria-hidden="true" />}

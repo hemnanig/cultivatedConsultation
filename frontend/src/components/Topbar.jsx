@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import logo from '../assets/images/CC-1024-x-1024-px.png'
 import { Avatar } from './ui.jsx'
+import ThemeToggle from './ThemeToggle.jsx'
 import {
   HomeIcon,
   UsersIcon,
@@ -71,14 +72,14 @@ export default function Topbar({ me, onSignedOut }) {
   }
 
   return (
-    <header className="fixed inset-x-0 top-0 z-30 hidden h-14 border-b border-stone-200 bg-white md:flex">
+    <header className="fixed inset-x-0 top-0 z-30 hidden h-14 border-b border-stone-200 bg-surface md:flex">
       <div className="mx-auto flex w-full max-w-6xl items-center gap-3 px-4">
         <NavLink to="/" className="flex shrink-0 items-center gap-2">
           <img className="h-8 w-8" src={logo} alt="Cultivated Consultation" />
         </NavLink>
 
         <form onSubmit={submitSearch} className="w-56 shrink-0 lg:w-72">
-          <div className="flex items-center gap-2 rounded-lg border border-transparent bg-stone-100 px-3 py-1.5 focus-within:border-brand-300 focus-within:bg-white focus-within:ring-2 focus-within:ring-brand-100">
+          <div className="flex items-center gap-2 rounded-lg border border-transparent bg-stone-100 px-3 py-1.5 focus-within:border-brand-300 focus-within:bg-surface focus-within:ring-2 focus-within:ring-brand-500/25">
             <SearchIcon className="h-4 w-4 shrink-0 text-stone-400" />
             <input
               type="text"
@@ -121,7 +122,7 @@ export default function Topbar({ me, onSignedOut }) {
           </button>
 
           {menuOpen && (
-            <div className="absolute right-0 top-full mt-2 w-64 rounded-xl border border-stone-200 bg-white p-2 shadow-lg">
+            <div className="absolute right-0 top-full mt-2 w-64 rounded-xl border border-stone-200 bg-surface p-2 shadow-lg">
               <NavLink
                 to="/profile"
                 onClick={() => setMenuOpen(false)}
@@ -145,6 +146,8 @@ export default function Topbar({ me, onSignedOut }) {
                   Admin
                 </NavLink>
               )}
+
+              <ThemeToggle className="mt-1 flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium text-stone-700 hover:bg-stone-50" />
 
               <div className="my-2 border-t border-stone-100" />
 

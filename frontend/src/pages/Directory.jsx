@@ -49,7 +49,7 @@ export default function Directory({ me, onSignedOut }) {
 
   return (
     <AppLayout me={me} onSignedOut={onSignedOut}>
-      <main className="mx-auto flex max-w-3xl flex-col gap-4 px-4 py-8">
+      <main className="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-8">
         <div>
           <h1 className="font-display text-2xl font-semibold text-stone-900">Member directory</h1>
           <p className="mt-1 text-sm text-stone-600">
@@ -91,7 +91,7 @@ export default function Directory({ me, onSignedOut }) {
         )}
 
         {members && filtered.length > 0 && (
-          <ul className="flex flex-col gap-3">
+          <ul className="grid gap-3 lg:grid-cols-2">
             {filtered.map((m) => (
               <li key={m.id} className="cc-card flex items-start gap-3 p-4">
                 <Avatar name={m.name} />

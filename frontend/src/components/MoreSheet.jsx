@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { api } from '../api.js'
 import { Avatar } from './ui.jsx'
 import { InfoIcon, ShieldIcon, LogOutIcon, BellIcon, QuestionIcon, EnvelopeIcon, LockIcon, DocumentIcon } from './icons.jsx'
+import ThemeToggle from './ThemeToggle.jsx'
 
 /**
  * Mobile-only overflow sheet for the bottom nav — everything that doesn't
@@ -27,7 +28,7 @@ export default function MoreSheet({ me, onSignedOut, onClose }) {
   return (
     <div className="fixed inset-0 z-40 md:hidden">
       <div className="absolute inset-0 bg-stone-900/30" onClick={onClose} />
-      <div className="absolute inset-x-0 bottom-16 max-h-[80vh] overflow-y-auto rounded-t-2xl bg-white p-3 shadow-lg">
+      <div className="absolute inset-x-0 bottom-16 max-h-[80vh] overflow-y-auto rounded-t-2xl bg-surface p-3 shadow-lg">
         <Link
           to="/profile"
           onClick={onClose}
@@ -111,6 +112,11 @@ export default function MoreSheet({ me, onSignedOut, onClose }) {
             Admin
           </Link>
         )}
+
+        <ThemeToggle
+          className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-stone-700 hover:bg-stone-50"
+          iconClassName="h-5 w-5 shrink-0"
+        />
 
         <div className="my-2 border-t border-stone-100" />
 

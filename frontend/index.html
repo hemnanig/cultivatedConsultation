@@ -10,6 +10,15 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <!-- PWA manifest goes here once we add manifest.json + icons — see README -->
+    <script>
+      // Runs before first paint so there's no flash of the wrong theme.
+      // Mirrors the logic in src/lib/theme.js — keep the two in sync.
+      (function () {
+        var stored = localStorage.getItem('cc-theme')
+        var dark = stored ? stored === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches
+        document.documentElement.classList.toggle('dark', dark)
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -24,6 +24,7 @@ export default function About({ me, onSignedOut }) {
     <AppLayout me={me} onSignedOut={onSignedOut}>
       <main className="mx-auto flex max-w-3xl flex-col gap-12 px-4 py-10">
         <section>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-clay-600">Our mission</p>
           <h1 className="font-display text-3xl font-semibold text-stone-900">
             A secure platform for mental health providers
           </h1>
@@ -36,17 +37,17 @@ export default function About({ me, onSignedOut }) {
           </p>
         </section>
 
-        <section className="cc-card p-6 sm:p-8">
+        <section className="cc-card border-l-4 border-l-clay-500 p-6 sm:p-8">
           <h2 className="text-lg font-semibold text-stone-900">Meet our founder</h2>
           <div className="mt-4 flex flex-col gap-5 sm:flex-row">
             <img
               src={founderPhoto}
               alt="Dr. Kacey L. Jenkins"
-              className="h-28 w-28 shrink-0 rounded-full object-cover"
+              className="h-28 w-28 shrink-0 rounded-full object-cover ring-4 ring-clay-100"
             />
             <div>
               <p className="font-medium text-stone-900">Dr. Kacey L. Jenkins</p>
-              <p className="text-sm text-stone-500">Founder, Licensed Marriage and Family Therapist</p>
+              <p className="text-sm font-medium text-clay-600">Founder, Licensed Marriage and Family Therapist</p>
               <p className="mt-3 text-sm leading-relaxed text-stone-700">
                 Dr. Jenkins founded Cultivated Consultation to address the growing need for
                 ethically compliant and supportive environments for mental health and behavioral
@@ -74,6 +75,7 @@ export default function About({ me, onSignedOut }) {
           <div className="mt-4 grid gap-4 sm:grid-cols-3">
             {pillars.map((pillar) => (
               <div key={pillar.title} className="cc-card p-5">
+                <span className="mb-3 flex h-2.5 w-2.5 rounded-full bg-brand-500" aria-hidden="true" />
                 <p className="font-medium text-stone-900">{pillar.title}</p>
                 <p className="mt-2 text-sm leading-relaxed text-stone-600">{pillar.description}</p>
               </div>
@@ -81,9 +83,9 @@ export default function About({ me, onSignedOut }) {
           </div>
         </section>
 
-        <section className="cc-card p-6 sm:p-8">
-          <h2 className="text-lg font-semibold text-stone-900">The mission</h2>
-          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-stone-700">
+        <section className="cc-card border-0 bg-brand-50 p-6 sm:p-8">
+          <h2 className="text-lg font-semibold text-brand-800">The mission</h2>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-brand-700">
             Cultivated Consultation is dedicated to fostering a supportive and ethical community
             for mental health professionals. We provide a platform for peer consultation,
             supervision, and collaboration — empowering members to enhance their clinical skills,
