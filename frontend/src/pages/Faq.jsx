@@ -61,8 +61,8 @@ export default function Faq({ me, onSignedOut }) {
     >
       <div>
         <h2 className="mb-3 text-base font-semibold text-stone-900">Our platform vs. social media groups</h2>
-        <div className="overflow-hidden rounded-lg border border-stone-200">
-          <table className="w-full border-collapse text-left text-sm">
+        <div className="overflow-x-auto rounded-lg border border-stone-200">
+          <table className="w-full min-w-[640px] border-collapse text-left text-sm">
             <thead>
               <tr className="bg-stone-50 text-xs font-semibold uppercase tracking-wide text-stone-500">
                 <th className="px-4 py-2.5">&nbsp;</th>
