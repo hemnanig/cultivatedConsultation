@@ -6,6 +6,8 @@ import com.cultivatedconsultation.backend.repository.AppUserRepository;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -27,6 +29,8 @@ import java.util.Set;
 @Component
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
+    private static final Logger log = LoggerFactory.getLogger(OAuth2LoginSuccessHandler.class);
+
     private final AppUserRepository appUserRepository;
     private final String frontendBaseUrl;
     private final Set<String> adminEmails;
@@ -41,6 +45,19 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         this.adminEmails = adminEmailsCsv == null || adminEmailsCsv.isBlank()
                 ? Set.of()
                 : Set.copyOf(Arrays.asList(adminEmailsCsv.toLowerCase().split(",")));
+
+        // Every deployed environment must override app.frontend-base-url
+        // (APP_FRONTEND_BASE_URL) away from the localhost default in
+        // application.yml. If it's still localhost here, every Google login on
+        // that deployment will silently redirect the visitor's browser to their
+        // own machine instead of back to the real site — this log line is the
+        // only signal you'll get, since the browser just shows a dead
+        // localhost page with no server-side error.
+        if (frontendBaseUrl != null && frontendBaseUrl.contains("localhost")) {
+            log.warn("app.frontend-base-url is still '{}' — if this is a deployed environment, "
+                    + "set APP_FRONTEND_BASE_URL to the real public URL or post-login redirects "
+                    + "will send users to localhost.", frontendBaseUrl);
+        }
     }
 
     @Override
