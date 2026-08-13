@@ -29,36 +29,38 @@
   --stone-800: #3a362b;
   --stone-900: #2a2620;
 
-  --brand-50: #eef4f2;
-  --brand-100: #d7e6e2;
-  --brand-200: #b0cdc5;
-  --brand-300: #84b0a4;
-  --brand-400: #598f80;
-  --brand-500: #3c6d61;
-  --brand-600: #2d4f4a;
-  --brand-700: #25403c;
-  --brand-800: #1e3330;
-  --brand-900: #152624;
+  /* Space-separated RGB channels, not hex — required so Tailwind's opacity
+     modifiers (ring-brand-500/25) can compute rgb(var(--brand-500) / 0.25). */
+  --brand-50: 238 244 242;
+  --brand-100: 215 230 226;
+  --brand-200: 176 205 197;
+  --brand-300: 132 176 164;
+  --brand-400: 89 143 128;
+  --brand-500: 60 109 97;
+  --brand-600: 45 79 74;
+  --brand-700: 37 64 60;
+  --brand-800: 30 51 48;
+  --brand-900: 21 38 36;
 
-  --clay-50: #fbeee7;
-  --clay-100: #f6e4db;
-  --clay-200: #edc7b0;
-  --clay-300: #e0a47f;
-  --clay-400: #d0824f;
-  --clay-500: #c1653f;
-  --clay-600: #a6532f;
-  --clay-700: #8a3d1f;
-  --clay-800: #6b2e17;
-  --clay-900: #4a1f0f;
+  --clay-50: 251 238 231;
+  --clay-100: 246 228 219;
+  --clay-200: 237 199 176;
+  --clay-300: 224 164 127;
+  --clay-400: 208 130 79;
+  --clay-500: 193 101 63;
+  --clay-600: 166 83 47;
+  --clay-700: 138 61 31;
+  --clay-800: 107 46 23;
+  --clay-900: 74 31 15;
 
-  --surface: #ffffff;
+  --surface: 255 255 255;
 
-  --status-pending: #b7791f;
-  --status-pending-bg: #fbf3e2;
-  --status-approved: #2f7d4f;
-  --status-approved-bg: #e8f5ec;
-  --status-denied: #b3261e;
-  --status-denied-bg: #fbeae9;
+  --status-pending: 183 121 31;
+  --status-pending-bg: 251 243 226;
+  --status-approved: 47 125 79;
+  --status-approved-bg: 232 245 236;
+  --status-denied: 179 38 30;
+  --status-denied-bg: 251 234 233;
 }
 
 .dark {
@@ -73,36 +75,36 @@
   --stone-800: #e1e6db;
   --stone-900: #f4f1e8;
 
-  --brand-50: #17251f;
-  --brand-100: #1e2f28;
-  --brand-200: #294238;
-  --brand-300: #3a5c4c;
-  --brand-400: #4f7a64;
-  --brand-500: #6b9c89;
-  --brand-600: #4aae8b;
-  --brand-700: #8fd8b9;
-  --brand-800: #c3ecd9;
-  --brand-900: #e3f7ec;
+  --brand-50: 23 37 31;
+  --brand-100: 30 47 40;
+  --brand-200: 41 66 56;
+  --brand-300: 58 92 76;
+  --brand-400: 79 122 100;
+  --brand-500: 107 156 137;
+  --brand-600: 74 174 139;
+  --brand-700: 143 216 185;
+  --brand-800: 195 236 217;
+  --brand-900: 227 247 236;
 
-  --clay-50: #241811;
-  --clay-100: #2f1f16;
-  --clay-200: #472d1d;
-  --clay-300: #6b4128;
-  --clay-400: #8f5734;
-  --clay-500: #b87445;
-  --clay-600: #d98f5c;
-  --clay-700: #edaf80;
-  --clay-800: #f5cba8;
-  --clay-900: #fbe6d2;
+  --clay-50: 36 24 17;
+  --clay-100: 47 31 22;
+  --clay-200: 71 45 29;
+  --clay-300: 107 65 40;
+  --clay-400: 143 87 52;
+  --clay-500: 184 116 69;
+  --clay-600: 217 143 92;
+  --clay-700: 237 175 128;
+  --clay-800: 245 203 168;
+  --clay-900: 251 230 210;
 
-  --surface: #1f2822;
+  --surface: 31 40 34;
 
-  --status-pending: #e8b563;
-  --status-pending-bg: #332711;
-  --status-approved: #74cb9a;
-  --status-approved-bg: #16301f;
-  --status-denied: #e38a83;
-  --status-denied-bg: #3a1a17;
+  --status-pending: 232 181 99;
+  --status-pending-bg: 51 39 17;
+  --status-approved: 116 203 154;
+  --status-approved-bg: 22 48 31;
+  --status-denied: 227 138 131;
+  --status-denied-bg: 58 26 23;
 }
 
 @layer base {
