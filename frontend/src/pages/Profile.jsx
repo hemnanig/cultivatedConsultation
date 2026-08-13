@@ -1,10 +1,11 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { api } from '../api.js'
-import NavBar from '../components/NavBar.jsx'
+import AppLayout from '../components/AppLayout.jsx'
 import { Avatar, SpecialtyPill } from '../components/ui.jsx'
 import { parseSpecialties } from '../lib/format.js'
 
-export default function Profile({ me, onUpdated }) {
+export default function Profile({ me, onUpdated, onSignedOut }) {
   const [badge, setBadge] = useState(me.badge || '')
   const [bio, setBio] = useState(me.bio || '')
   const [specialties, setSpecialties] = useState(me.specialties || '')
@@ -28,10 +29,13 @@ export default function Profile({ me, onUpdated }) {
     }
   }
 
-  return (
-    <div className="min-h-screen bg-stone-50">
-      <NavBar me={me} />
+  async function logout() {
+    await api.logout()
+    onSignedOut()
+  }
 
+  return (
+    <AppLayout me={me} onSignedOut={onSignedOut}>
       <main className="mx-auto flex max-w-2xl flex-col gap-6 px-4 py-8">
         <div className="flex items-center gap-4">
           <Avatar name={me.name || me.email} size="lg" />
@@ -40,6 +44,16 @@ export default function Profile({ me, onUpdated }) {
             <p className="text-sm text-stone-500">{me.email}</p>
           </div>
         </div>
+
+        {me.admin && (
+          <Link
+            to="/admin"
+            className="cc-card flex items-center justify-between p-4 text-sm font-medium text-stone-900 transition-colors hover:bg-stone-50"
+          >
+            Review pending applications
+            <span className="text-stone-400">→</span>
+          </Link>
+        )}
 
         <form className="cc-card flex flex-col gap-5 p-6" onSubmit={submit}>
           <div>
@@ -104,7 +118,14 @@ export default function Profile({ me, onUpdated }) {
           </div>
           {error && <p className="text-sm text-status-denied">{error}</p>}
         </form>
+
+        <button
+          onClick={logout}
+          className="cc-btn-secondary self-start md:hidden"
+        >
+          Log out
+        </button>
       </main>
-    </div>
+    </AppLayout>
   )
 }

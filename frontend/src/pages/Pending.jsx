@@ -1,11 +1,17 @@
 import logo from '../assets/images/CC-1024-x-1024-px.png'
 import { StatusBadge } from '../components/ui.jsx'
+import { api } from '../api.js'
 
 const steps = ['Application submitted', 'Under review by an admin', 'Community access']
 
-export default function Pending({ me }) {
+export default function Pending({ me, onSignedOut }) {
   const isDenied = me.membershipStatus === 'DENIED'
   const activeStep = isDenied ? 1 : 1 // review is the active stage either way until a decision is made
+
+  async function logout() {
+    await api.logout()
+    onSignedOut()
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-stone-50 px-6 py-12">
@@ -48,6 +54,10 @@ export default function Pending({ me }) {
         <p className="mt-8 border-t border-stone-100 pt-4 text-xs text-stone-400">
           Questions about your application? Contact your community administrator.
         </p>
+
+        <button onClick={logout} className="cc-btn-secondary cc-btn-sm mt-4">
+          Log out
+        </button>
       </div>
     </div>
   )

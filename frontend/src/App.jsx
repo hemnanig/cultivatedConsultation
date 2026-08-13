@@ -48,18 +48,22 @@ export default function App() {
     )
   }
 
+  function onSignedOut() {
+    setMe(null)
+  }
+
   return (
     <Routes>
       <Route path="/auth/callback" element={<AuthCallback onSignedIn={refreshMe} />} />
       {!me && <Route path="*" element={<Login />} />}
-      {me && me.membershipStatus !== 'APPROVED' && <Route path="*" element={<Pending me={me} />} />}
+      {me && me.membershipStatus !== 'APPROVED' && <Route path="*" element={<Pending me={me} onSignedOut={onSignedOut} />} />}
       {me && me.membershipStatus === 'APPROVED' && (
         <>
-          <Route path="/" element={<Feed me={me} />} />
-          <Route path="/directory" element={<Directory me={me} />} />
-          <Route path="/about" element={<About me={me} />} />
-          <Route path="/profile" element={<Profile me={me} onUpdated={refreshMe} />} />
-          <Route path="/admin" element={<Admin me={me} />} />
+          <Route path="/" element={<Feed me={me} onSignedOut={onSignedOut} />} />
+          <Route path="/directory" element={<Directory me={me} onSignedOut={onSignedOut} />} />
+          <Route path="/about" element={<About me={me} onSignedOut={onSignedOut} />} />
+          <Route path="/profile" element={<Profile me={me} onUpdated={refreshMe} onSignedOut={onSignedOut} />} />
+          <Route path="/admin" element={<Admin me={me} onSignedOut={onSignedOut} />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </>
       )}

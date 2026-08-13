@@ -40,6 +40,7 @@ async function request(path, options = {}) {
 
 export const api = {
   me: () => request('/api/me'),
+  logout: () => request('/api/logout', { method: 'POST' }),
   updateMe: (fields) => request('/api/me', { method: 'PATCH', body: JSON.stringify(fields) }),
   listPosts: () => request('/api/posts'),
   createPost: (content) => request('/api/posts', { method: 'POST', body: JSON.stringify({ content }) }),

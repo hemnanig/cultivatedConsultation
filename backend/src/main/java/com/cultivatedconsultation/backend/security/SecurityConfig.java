@@ -39,6 +39,15 @@ public class SecurityConfig {
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler(successHandler)
                 )
+                .logout(logout -> logout
+                        .logoutUrl("/api/logout")
+                        // API-style logout: just invalidate the session and clear the cookie,
+                        // then respond 204 instead of the default redirect-to-a-login-page
+                        // behavior, which doesn't exist as a real route in this SPA.
+                        .logoutSuccessHandler((request, response, authentication) ->
+                                response.setStatus(HttpStatus.NO_CONTENT.value())
+                        )
+                )
                 .exceptionHandling(ex -> ex
                         // API calls get a 401 instead of being redirected into an HTML login page
                         .defaultAuthenticationEntryPointFor(

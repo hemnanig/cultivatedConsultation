@@ -1,13 +1,16 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { api } from '../api.js'
-import NavBar from '../components/NavBar.jsx'
+import AppLayout from '../components/AppLayout.jsx'
 import { Avatar, BadgePill, SpecialtyPill, EmptyState, Spinner } from '../components/ui.jsx'
 import { parseSpecialties } from '../lib/format.js'
 
-export default function Directory({ me }) {
+export default function Directory({ me, onSignedOut }) {
   const [members, setMembers] = useState(null)
   const [error, setError] = useState(null)
-  const [query, setQuery] = useState('')
+  const [searchParams] = useSearchParams()
+  // Seeded from the sidebar's search box (?q=...) but still freely editable here.
+  const [query, setQuery] = useState(searchParams.get('q') || '')
   const [activeSpecialty, setActiveSpecialty] = useState(null)
 
   useEffect(() => {
@@ -44,9 +47,7 @@ export default function Directory({ me }) {
   }, [members, query, activeSpecialty])
 
   return (
-    <div className="min-h-screen bg-stone-50">
-      <NavBar me={me} />
-
+    <AppLayout me={me} onSignedOut={onSignedOut}>
       <main className="mx-auto flex max-w-3xl flex-col gap-4 px-4 py-8">
         <div>
           <h1 className="font-display text-2xl font-semibold text-stone-900">Member directory</h1>
@@ -112,6 +113,6 @@ export default function Directory({ me }) {
           </ul>
         )}
       </main>
-    </div>
+    </AppLayout>
   )
 }

@@ -1,4 +1,4 @@
-import NavBar from '../components/NavBar.jsx'
+import AppLayout from '../components/AppLayout.jsx'
 
 const pillars = [
   {
@@ -18,11 +18,9 @@ const pillars = [
   },
 ]
 
-export default function About({ me }) {
+export default function About({ me, onSignedOut }) {
   return (
-    <div className="min-h-screen bg-stone-50">
-      <NavBar me={me} />
-
+    <AppLayout me={me} onSignedOut={onSignedOut}>
       <main className="mx-auto flex max-w-3xl flex-col gap-12 px-4 py-10">
         <section>
           <h1 className="font-display text-3xl font-semibold text-stone-900">
@@ -40,6 +38,11 @@ export default function About({ me }) {
         <section className="cc-card p-6 sm:p-8">
           <h2 className="text-lg font-semibold text-stone-900">Meet our founder</h2>
           <div className="mt-4 flex flex-col gap-5 sm:flex-row">
+            {/* TODO: swap for the real photo once it's saved to
+                frontend/src/assets/images/founder-kacey-jenkins.webp — then replace
+                this placeholder with:
+                  import founderPhoto from '../assets/images/founder-kacey-jenkins.webp'
+                  <img src={founderPhoto} alt="Dr. Kacey L. Jenkins" className="h-28 w-28 shrink-0 rounded-full object-cover" /> */}
             <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-full bg-brand-100 font-display text-3xl font-semibold text-brand-700">
               KJ
             </div>
@@ -90,6 +93,6 @@ export default function About({ me }) {
           </p>
         </section>
       </main>
-    </div>
+    </AppLayout>
   )
 }

@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import { api } from '../api.js'
-import NavBar from '../components/NavBar.jsx'
+import AppLayout from '../components/AppLayout.jsx'
 import { Avatar, EmptyState, Spinner } from '../components/ui.jsx'
 
-export default function Admin({ me }) {
+export default function Admin({ me, onSignedOut }) {
   const [users, setUsers] = useState(null)
   const [error, setError] = useState(null)
   const [actingOn, setActingOn] = useState(null)
@@ -38,9 +38,7 @@ export default function Admin({ me }) {
   if (!me.admin) return <Navigate to="/" replace />
 
   return (
-    <div className="min-h-screen bg-stone-50">
-      <NavBar me={me} />
-
+    <AppLayout me={me} onSignedOut={onSignedOut}>
       <main className="mx-auto flex max-w-3xl flex-col gap-4 px-4 py-8">
         <div>
           <h1 className="font-display text-2xl font-semibold text-stone-900">Pending applications</h1>
@@ -87,6 +85,6 @@ export default function Admin({ me }) {
           </ul>
         )}
       </main>
-    </div>
+    </AppLayout>
   )
 }

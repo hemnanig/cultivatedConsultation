@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react'
 import { api } from '../api.js'
 import PostComposer from '../components/PostComposer.jsx'
 import PostList from '../components/PostList.jsx'
-import NavBar from '../components/NavBar.jsx'
+import AppLayout from '../components/AppLayout.jsx'
 import { EmptyState, Spinner } from '../components/ui.jsx'
 
-export default function Feed({ me }) {
+export default function Feed({ me, onSignedOut }) {
   const [posts, setPosts] = useState(null)
   const [error, setError] = useState(null)
 
@@ -22,9 +22,7 @@ export default function Feed({ me }) {
   }
 
   return (
-    <div className="min-h-screen bg-stone-50">
-      <NavBar me={me} />
-
+    <AppLayout me={me} onSignedOut={onSignedOut}>
       <main className="mx-auto flex max-w-3xl flex-col gap-4 px-4 py-8">
         <PostComposer onCreated={load} />
 
@@ -44,6 +42,6 @@ export default function Feed({ me }) {
 
         {posts && posts.length > 0 && <PostList posts={posts} onChanged={load} />}
       </main>
-    </div>
+    </AppLayout>
   )
 }
