@@ -33,8 +33,19 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // stateless-cookie POC; revisit before this holds real user data
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/error", "/api/health").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers("/api/health").permitAll()
+                        .requestMatchers("/api/**").authenticated()
+                        // Everything else is the React SPA shell (index.html, JS/CSS bundles,
+                        // images, and every client-side route it owns) — no secrets live there,
+                        // so it's fine for anyone, logged in or not, to fetch it. The actual
+                        // access control happens per-request against /api/** above, and again
+                        // inside the SPA itself (Login/Pending screens) based on what /api/me
+                        // returns. This also used to be anyRequest().authenticated(), which
+                        // silently broke a fully logged-out visitor's very first page load: the
+                        // JS bundle referenced by index.html would 302 to the Google login
+                        // start URL instead of loading, so the SPA (including the Login screen)
+                        // never rendered.
+                        .anyRequest().permitAll()
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler(successHandler)
