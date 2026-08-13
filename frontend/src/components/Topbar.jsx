@@ -148,9 +148,14 @@ export default function Topbar({ me, onSignedOut }) {
 
               <div className="my-2 border-t border-stone-100" />
 
-              <div className="flex flex-wrap gap-x-3 gap-y-1 px-2.5 pb-2 text-xs text-stone-400">
+              <div className="flex flex-col">
                 {menuLinks.map(({ to, label }) => (
-                  <NavLink key={to} to={to} onClick={() => setMenuOpen(false)} className="hover:text-stone-600 hover:underline">
+                  <NavLink
+                    key={to}
+                    to={to}
+                    onClick={() => setMenuOpen(false)}
+                    className="rounded-lg px-2.5 py-1.5 text-xs text-stone-500 hover:bg-stone-50 hover:text-stone-900"
+                  >
                     {label}
                   </NavLink>
                 ))}
