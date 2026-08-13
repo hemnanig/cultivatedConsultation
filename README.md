@@ -134,8 +134,12 @@ Don't set `PORT` — Render sets that automatically and `application.yml` alread
 
 ## What's built beyond the original 2-feature POC
 
-Design system (Tailwind + design tokens), an About page with founder bio/mission content, member profiles (badge/bio/specialties), a member directory with specialty search, and an admin approval UI — see `cultivated-consultation-ui-ux-and-roadmap.md` (shared separately) for the full assessment this was built from.
+**Tier 1:** Design system (Tailwind + design tokens), an About page with founder bio/mission content, member profiles (badge/bio/specialties), a member directory with specialty search, and an admin approval UI.
+
+**Tier 2:** Groups of Interest (private, selectively-invited group discussions — the live site's dual-relationship safeguard), real credential verification (license number + state submitted for admin review, separate from the self-reported badge text), 1:1 direct messaging, and in-app notifications (new replies, group adds, membership/credential decisions, new messages).
+
+See `cultivated-consultation-ui-ux-and-roadmap.md` (shared separately) for the full assessment this was built from.
 
 ## What's deliberately not built yet
 
-Groups (including the "avoid dual relationships" targeted-group feature from the live site), anonymous posting, payments/subscriptions, university roster management, real credential *verification* (license upload + admin review — badge is still self-reported), direct messaging, notifications, push notifications, PWA manifest. See the product requirements brief in the project knowledge for the full picture.
+Anonymous posting, payments/subscriptions, university roster management, email/push notifications (in-app only for now — email would need an SMTP/provider credential), public directory, PWA manifest. See the product requirements brief in the project knowledge for the full picture.
