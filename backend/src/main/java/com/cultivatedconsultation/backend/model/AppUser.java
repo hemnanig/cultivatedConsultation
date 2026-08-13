@@ -57,6 +57,10 @@ public class AppUser {
     @Column(name = "is_admin", nullable = false)
     private boolean admin = false;
 
+    // Opt-in only — default is not listed. See PublicDirectoryController.
+    @Column(name = "public_directory_opt_in", nullable = false)
+    private boolean publicDirectoryOptIn = false;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt = Instant.now();
 }

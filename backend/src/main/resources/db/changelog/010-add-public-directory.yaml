@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 015-add-public-directory-opt-in-to-app-user
+      author: cultivated-consultation
+      changes:
+        - addColumn:
+            schemaName: cultivated_consultation
+            tableName: app_user
+            columns:
+              - column:
+                  name: public_directory_opt_in
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false

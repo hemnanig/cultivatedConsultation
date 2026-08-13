@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 012-add-anonymous-to-post
+      author: cultivated-consultation
+      changes:
+        - addColumn:
+            schemaName: cultivated_consultation
+            tableName: post
+            columns:
+              - column:
+                  name: anonymous
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false

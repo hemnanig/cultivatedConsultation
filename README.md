@@ -1,6 +1,6 @@
 # Cultivated Consultation — POC
 
-Verification-gated professional consultation community. This POC covers exactly two features: Google sign-in with a manual admin-approval gate, and a basic consultation feed (post + reply). Everything else in the full product brief (groups, anonymous posting, payments, university rosters, public directory) is intentionally out of scope for now.
+Verification-gated professional consultation community. Started as a two-feature POC (Google sign-in with manual admin approval, plus a basic consultation feed) and has since grown through three build tiers — see "What's built" below. Payments/subscriptions and university roster management remain intentionally out of scope.
 
 ## Stack
 
@@ -81,6 +81,28 @@ Visit `http://localhost:5173`. Sign in with a Google account whose email is in `
 - Add your test account's email to `APP_ADMIN_EMAILS` (auto-approves on first login), or
 - Sign in as an admin account and visit `/admin` in the app — it lists pending applications with Approve/Deny buttons (calls the same `POST /api/admin/users/{id}/approve` / `/deny` endpoints as before, just with a UI now).
 
+### 6. Push notifications (optional — VAPID keys)
+
+Web push works without any setup on the in-app-notification side, but actually delivering a push (to a closed tab / installed PWA) needs a VAPID keypair. Generate one:
+
+```bash
+npx web-push generate-vapid-keys
+```
+
+Then set on the backend:
+
+```bash
+export VAPID_PUBLIC_KEY=<the public key it prints>
+export VAPID_PRIVATE_KEY=<the private key it prints>
+export VAPID_SUBJECT=mailto:you@example.com   # optional, defaults to mailto:admin@cultivatedconsultation.com
+```
+
+If these are unset, the backend logs a warning once at startup and every push send becomes a silent no-op — in-app notifications (the bell icon, `/notifications`) are unaffected either way. On the frontend, when `VAPID_PUBLIC_KEY` isn't set, `GET /api/push/vapid-public-key` returns an empty string and the "Push notifications" card on the Profile page just doesn't render — no broken toggle, no error shown to the user.
+
+Push also requires the frontend to be served over HTTPS (or `localhost`, which the browser treats as a secure context) and needs the service worker (`frontend/public/sw.js`) registered, which only happens in a production build (`import.meta.env.PROD` — see `src/main.jsx`), not `npm run dev`. To test push locally, run `npm run build && npm run preview` instead of `npm run dev`.
+
+**This is the one dependency (`nl.martijndwars:web-push` in `backend/pom.xml`) that hasn't been verified with a real `mvn compile` anywhere this was built** — double check the backend actually compiles with it before deploying.
+
 ## Database migrations (Liquibase)
 
 The schema lives in `backend/src/main/resources/db/changelog/`, not in the entity classes. `db.changelog-master.yaml` includes changeset files in order: `000-create-schema.yaml` creates a dedicated `cultivated_consultation` schema, then `001-initial-schema.yaml` creates `app_user`, `post`, and `reply` inside it.
@@ -138,8 +160,10 @@ Don't set `PORT` — Render sets that automatically and `application.yml` alread
 
 **Tier 2:** Groups of Interest (private, selectively-invited group discussions — the live site's dual-relationship safeguard), real credential verification (license number + state submitted for admin review, separate from the self-reported badge text), 1:1 direct messaging, and in-app notifications (new replies, group adds, membership/credential decisions, new messages).
 
+**Tier 3:** Anonymous consultation posts on the public feed (identity hidden from other members, still visible to admins and the post's own author — badge/credential status still shows), admin community-wide announcements (pinned banner on Home, notifies every approved member), an Opportunities & Offerings board (jobs/research/supervision/training, no threads — respond via DM), a public opt-in member directory (`/public-directory`, works signed out, only fields a member explicitly agreed to share), PWA installability (manifest + service worker, "Add to Home Screen"), and real Web Push notifications (see the VAPID setup step above) so notifications reach people even when the tab/app isn't open.
+
 See `cultivated-consultation-ui-ux-and-roadmap.md` (shared separately) for the full assessment this was built from.
 
 ## What's deliberately not built yet
 
-Anonymous posting, payments/subscriptions, university roster management, email/push notifications (in-app only for now — email would need an SMTP/provider credential), public directory, PWA manifest. See the product requirements brief in the project knowledge for the full picture.
+Payments/subscriptions and university roster/seat management — both explicitly out of scope for this round. Email notifications are also still in-app + push only (no SMTP/provider credential wired up). See the product requirements brief in the project knowledge for the full picture.

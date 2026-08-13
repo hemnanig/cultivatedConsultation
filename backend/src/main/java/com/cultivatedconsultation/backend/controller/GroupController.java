@@ -155,7 +155,7 @@ public class GroupController {
         ConsultationGroup group = findGroup(groupId);
         requireMembership(me, group);
         return postRepository.findByGroupWithAuthorOrderByCreatedAtDesc(group).stream()
-                .map(PostResponse::from)
+                .map(p -> PostResponse.from(p, me))
                 .toList();
     }
 
@@ -167,11 +167,14 @@ public class GroupController {
         ConsultationGroup group = findGroup(groupId);
         requireMembership(me, group);
 
+        // Anonymous posting is a public-feed-only feature (see Post.anonymous) —
+        // group posts stay attributed regardless of what the client sends, since
+        // groups are already a curated, hand-picked audience.
         Post post = new Post();
         post.setAuthor(me);
         post.setContent(request.content());
         post.setGroup(group);
-        return PostResponse.from(postRepository.save(post));
+        return PostResponse.from(postRepository.save(post), me);
     }
 
     @PostMapping("/{groupId}/posts/{postId}/replies")

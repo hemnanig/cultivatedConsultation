@@ -186,3 +186,50 @@ export function DotsIcon(props) {
     </svg>
   )
 }
+
+/** Anonymous / incognito indicator — used on the "post anonymously" toggle and masked authors. */
+export function IncognitoIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" {...base} {...props}>
+      <path d="M4 15.5c0-4 3.5-7 8-7s8 3 8 7" />
+      <circle cx="8.5" cy="16" r="2.1" />
+      <circle cx="15.5" cy="16" r="2.1" />
+      <path d="M10.5 16h3" />
+      <path d="M3 12.5l3-1.5M21 12.5l-3-1.5" />
+    </svg>
+  )
+}
+
+/** Opportunities & Offerings board (jobs / research / supervision / training). */
+export function BriefcaseIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" {...base} {...props}>
+      <rect x="3" y="7.5" width="18" height="11.5" rx="2" />
+      <path d="M8.5 7.5V6a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v1.5" />
+      <path d="M3 12.5h18" />
+    </svg>
+  )
+}
+
+/** Community-wide admin announcements. */
+export function MegaphoneIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" {...base} {...props}>
+      <path d="M3 10.5v3a1 1 0 0 0 1 1h1.8L12 18v-11L5.8 9.5H4a1 1 0 0 0-1 1Z" />
+      <path d="M15.5 8.2a4 4 0 0 1 0 7.6" />
+      <path d="M18.5 6.5a7.5 7.5 0 0 1 0 11" />
+      <path d="M7 14.5 8 19" />
+    </svg>
+  )
+}
+
+/** Public opt-in directory. */
+export function GlobeIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" {...base} {...props}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M3 12h18" />
+      <path d="M12 3c2.5 2.4 3.8 5.6 3.8 9s-1.3 6.6-3.8 9c-2.5-2.4-3.8-5.6-3.8-9s1.3-6.6 3.8-9Z" />
+    </svg>
+  )
+}

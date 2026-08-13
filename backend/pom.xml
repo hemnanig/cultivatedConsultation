@@ -51,6 +51,14 @@
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
         </dependency>
+        <!-- Web Push (VAPID + RFC 8291 payload encryption) for browser push notifications.
+             See PushNotificationService — this is the one dependency in the project this
+             sandbox could not compile-check; verify with a real `mvn compile` before deploying. -->
+        <dependency>
+            <groupId>nl.martijndwars</groupId>
+            <artifactId>web-push</artifactId>
+            <version>5.1.1</version>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

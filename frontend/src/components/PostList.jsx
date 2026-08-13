@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Avatar, BadgePill } from './ui.jsx'
-import { ChatBubbleIcon } from './icons.jsx'
+import { ChatBubbleIcon, IncognitoIcon } from './icons.jsx'
 import { formatRelativeTime } from '../lib/format.js'
 
 /**
@@ -40,14 +40,36 @@ function PostItem({ post, onChanged, createReply }) {
     }
   }
 
+  // The backend masks author identity for anonymous posts to everyone except
+  // admins and the post's own author — when masked, author.name is null but
+  // badge/credentialStatus are preserved so the badge pill still renders.
+  const isMasked = post.anonymous && !post.author.name
+
   return (
     <li className="cc-card p-5">
       <div className="flex items-start gap-3">
-        <Avatar name={post.author.name} />
+        {isMasked ? (
+          <div
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-stone-200 text-stone-500"
+            aria-hidden="true"
+          >
+            <IncognitoIcon className="h-4.5 w-4.5" />
+          </div>
+        ) : (
+          <Avatar name={post.author.name} />
+        )}
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="font-medium text-stone-900">{post.author.name}</span>
+            <span className={isMasked ? 'italic text-stone-500' : 'font-medium text-stone-900'}>
+              {isMasked ? 'Anonymous' : post.author.name}
+            </span>
             <BadgePill badge={post.author.badge} credentialStatus={post.author.credentialStatus} />
+            {post.anonymous && !isMasked && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-stone-100 px-2 py-0.5 text-[11px] font-medium text-stone-500">
+                <IncognitoIcon className="h-3 w-3" />
+                Posted anonymously
+              </span>
+            )}
           </div>
           <p className="text-xs text-stone-400">{formatRelativeTime(post.createdAt)}</p>
           <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-stone-800">{post.content}</p>

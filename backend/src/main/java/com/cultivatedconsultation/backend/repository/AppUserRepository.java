@@ -13,4 +13,5 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
     Optional<AppUser> findByEmail(String email);
     List<AppUser> findByMembershipStatusOrderByNameAsc(MembershipStatus status);
     List<AppUser> findByCredentialStatusOrderByNameAsc(CredentialStatus status);
+    List<AppUser> findByPublicDirectoryOptInTrueAndMembershipStatusOrderByNameAsc(MembershipStatus status);
 }

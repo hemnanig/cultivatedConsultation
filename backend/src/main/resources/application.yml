@@ -62,3 +62,10 @@ app:
   admin-emails: ${APP_ADMIN_EMAILS:}
   # Where the backend redirects the browser after a successful Google login.
   frontend-base-url: ${APP_FRONTEND_BASE_URL:http://localhost:5173}
+  vapid:
+    # Generate with `npx web-push generate-vapid-keys` (or any VAPID keypair generator) —
+    # see README's push notifications section. Push is silently disabled (logged once at
+    # startup) if these are unset, so leaving them blank locally is fine.
+    public-key: ${VAPID_PUBLIC_KEY:}
+    private-key: ${VAPID_PRIVATE_KEY:}
+    subject: ${VAPID_SUBJECT:mailto:admin@cultivatedconsultation.com}

@@ -7,9 +7,11 @@ import {
   HomeIcon,
   UsersIcon,
   GroupIcon,
+  BriefcaseIcon,
   ChatBubbleIcon,
   BellIcon,
   ShieldIcon,
+  GlobeIcon,
   LogOutIcon,
   SearchIcon,
 } from './icons.jsx'
@@ -19,6 +21,7 @@ const navItems = [
   { to: '/', label: 'Home', icon: HomeIcon, end: true },
   { to: '/directory', label: 'Directory', icon: UsersIcon },
   { to: '/groups', label: 'Groups', icon: GroupIcon },
+  { to: '/opportunities', label: 'Opportunities', icon: BriefcaseIcon },
   { to: '/messages', label: 'Messages', icon: ChatBubbleIcon },
   { to: '/notifications', label: 'Notifications', icon: BellIcon },
 ]
@@ -78,7 +81,7 @@ export default function Topbar({ me, onSignedOut }) {
           <img className="h-8 w-8" src={logo} alt="Cultivated Consultation" />
         </NavLink>
 
-        <form onSubmit={submitSearch} className="w-56 shrink-0 lg:w-72">
+        <form onSubmit={submitSearch} className="w-40 shrink-0 lg:w-64">
           <div className="flex items-center gap-2 rounded-lg border border-transparent bg-stone-100 px-3 py-1.5 focus-within:border-brand-300 focus-within:bg-surface focus-within:ring-2 focus-within:ring-brand-500/25">
             <SearchIcon className="h-4 w-4 shrink-0 text-stone-400" />
             <input
@@ -104,7 +107,7 @@ export default function Topbar({ me, onSignedOut }) {
                       </span>
                     )}
                   </span>
-                  <span>{label}</span>
+                  <span className="hidden lg:inline">{label}</span>
                   <span className={'mt-1 h-0.5 w-full rounded-full ' + (isActive ? 'bg-brand-600' : 'bg-transparent')} />
                 </>
               )}
@@ -146,6 +149,15 @@ export default function Topbar({ me, onSignedOut }) {
                   Admin
                 </NavLink>
               )}
+
+              <NavLink
+                to="/public-directory"
+                onClick={() => setMenuOpen(false)}
+                className="mt-1 flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium text-stone-700 hover:bg-stone-50"
+              >
+                <GlobeIcon className="h-4 w-4 shrink-0" />
+                Public directory
+              </NavLink>
 
               <ThemeToggle className="mt-1 flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium text-stone-700 hover:bg-stone-50" />
 

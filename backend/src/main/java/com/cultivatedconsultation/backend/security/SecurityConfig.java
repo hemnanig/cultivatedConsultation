@@ -34,6 +34,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/health").permitAll()
+                        // Opt-in public directory (see PublicDirectoryController) — no login by design.
+                        .requestMatchers("/api/public/**").permitAll()
                         .requestMatchers("/api/**").authenticated()
                         // Everything else is the React SPA shell (index.html, JS/CSS bundles,
                         // images, and every client-side route it owns) — no secrets live there,

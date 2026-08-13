@@ -33,6 +33,12 @@ public class Post {
     @Column(nullable = false, length = 4000)
     private String content;
 
+    // Public-feed-only (see PostController) — hides the author's identity from
+    // everyone except the author themselves and admins. Replies are never
+    // anonymous, per the product brief.
+    @Column(nullable = false)
+    private boolean anonymous = false;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt = Instant.now();
 

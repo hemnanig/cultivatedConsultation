@@ -45,7 +45,8 @@ export const api = {
   submitCredential: (licenseNumber, licenseState) =>
     request('/api/me/credential', { method: 'PATCH', body: JSON.stringify({ licenseNumber, licenseState }) }),
   listPosts: () => request('/api/posts'),
-  createPost: (content) => request('/api/posts', { method: 'POST', body: JSON.stringify({ content }) }),
+  createPost: (content, anonymous = false) =>
+    request('/api/posts', { method: 'POST', body: JSON.stringify({ content, anonymous }) }),
   createReply: (postId, content) =>
     request(`/api/posts/${postId}/replies`, { method: 'POST', body: JSON.stringify({ content }) }),
   listMembers: (specialty) =>
@@ -83,7 +84,30 @@ export const api = {
   listNotifications: () => request('/api/notifications'),
   unreadNotificationCount: () => request('/api/notifications/unread-count'),
   markNotificationRead: (id) => request(`/api/notifications/${id}/read`, { method: 'POST' }),
-  markAllNotificationsRead: () => request('/api/notifications/read-all', { method: 'POST' })
+  markAllNotificationsRead: () => request('/api/notifications/read-all', { method: 'POST' }),
+
+  // Admin community announcements
+  listAnnouncements: () => request('/api/announcements'),
+  createAnnouncement: (message) =>
+    request('/api/announcements', { method: 'POST', body: JSON.stringify({ message }) }),
+  deleteAnnouncement: (id) => request(`/api/announcements/${id}`, { method: 'DELETE' }),
+
+  // Opportunities & offerings board
+  listOpportunities: () => request('/api/opportunities'),
+  createOpportunity: (type, title, description) =>
+    request('/api/opportunities', { method: 'POST', body: JSON.stringify({ type, title, description }) }),
+  deleteOpportunity: (id) => request(`/api/opportunities/${id}`, { method: 'DELETE' }),
+
+  // Public opt-in directory — unauthenticated, but the wrapper's credentials:
+  // 'include' is harmless here since the endpoint doesn't require a session.
+  publicDirectory: () => request('/api/public/directory'),
+
+  // Web push
+  vapidPublicKey: () => request('/api/push/vapid-public-key'),
+  subscribePush: (subscription) =>
+    request('/api/push/subscriptions', { method: 'POST', body: JSON.stringify(subscription) }),
+  unsubscribePush: (endpoint) =>
+    request('/api/push/unsubscribe', { method: 'POST', body: JSON.stringify({ endpoint }) })
 }
 
 export function googleLoginUrl() {

@@ -14,6 +14,8 @@ import GroupDetail from './pages/GroupDetail.jsx'
 import Messages from './pages/Messages.jsx'
 import MessageThread from './pages/MessageThread.jsx'
 import Notifications from './pages/Notifications.jsx'
+import Opportunities from './pages/Opportunities.jsx'
+import PublicDirectory from './pages/PublicDirectory.jsx'
 import Faq from './pages/Faq.jsx'
 import Contact from './pages/Contact.jsx'
 import PrivacyPolicy from './pages/PrivacyPolicy.jsx'
@@ -64,6 +66,8 @@ export default function App() {
   return (
     <Routes>
       <Route path="/auth/callback" element={<AuthCallback onSignedIn={refreshMe} />} />
+      {/* Works signed out — the one page anonymous visitors can reach. */}
+      <Route path="/public-directory" element={<PublicDirectory me={me || null} />} />
       {!me && <Route path="*" element={<Login />} />}
       {me && me.membershipStatus !== 'APPROVED' && <Route path="*" element={<Pending me={me} onSignedOut={onSignedOut} />} />}
       {me && me.membershipStatus === 'APPROVED' && (
@@ -75,6 +79,7 @@ export default function App() {
           <Route path="/messages" element={<Messages me={me} onSignedOut={onSignedOut} />} />
           <Route path="/messages/:userId" element={<MessageThread me={me} onSignedOut={onSignedOut} />} />
           <Route path="/notifications" element={<Notifications me={me} onSignedOut={onSignedOut} />} />
+          <Route path="/opportunities" element={<Opportunities me={me} onSignedOut={onSignedOut} />} />
           <Route path="/about" element={<About me={me} onSignedOut={onSignedOut} />} />
           <Route path="/faq" element={<Faq me={me} onSignedOut={onSignedOut} />} />
           <Route path="/contact" element={<Contact me={me} onSignedOut={onSignedOut} />} />

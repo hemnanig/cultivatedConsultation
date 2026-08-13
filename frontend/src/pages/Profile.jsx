@@ -3,12 +3,15 @@ import { Link } from 'react-router-dom'
 import { api } from '../api.js'
 import AppLayout from '../components/AppLayout.jsx'
 import { Avatar, SpecialtyPill, CredentialStatusBadge } from '../components/ui.jsx'
+import { GlobeIcon } from '../components/icons.jsx'
 import { parseSpecialties } from '../lib/format.js'
+import PushNotificationSettings from '../components/PushNotificationSettings.jsx'
 
 export default function Profile({ me, onUpdated, onSignedOut }) {
   const [badge, setBadge] = useState(me.badge || '')
   const [bio, setBio] = useState(me.bio || '')
   const [specialties, setSpecialties] = useState(me.specialties || '')
+  const [publicDirectoryOptIn, setPublicDirectoryOptIn] = useState(!!me.publicDirectoryOptIn)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
   const [saved, setSaved] = useState(false)
@@ -25,7 +28,12 @@ export default function Profile({ me, onUpdated, onSignedOut }) {
     setError(null)
     setSaved(false)
     try {
-      await api.updateMe({ badge: badge.trim(), bio: bio.trim(), specialties: specialties.trim() })
+      await api.updateMe({
+        badge: badge.trim(),
+        bio: bio.trim(),
+        specialties: specialties.trim(),
+        publicDirectoryOptIn,
+      })
       await onUpdated()
       setSaved(true)
     } catch (err) {
@@ -133,6 +141,25 @@ export default function Profile({ me, onUpdated, onSignedOut }) {
             />
           </div>
 
+          <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-stone-200 bg-stone-50 px-3.5 py-3">
+            <input
+              type="checkbox"
+              className="mt-0.5 h-4 w-4 shrink-0 rounded border-stone-300 text-brand-600 focus:ring-brand-500"
+              checked={publicDirectoryOptIn}
+              onChange={(e) => setPublicDirectoryOptIn(e.target.checked)}
+            />
+            <span>
+              <span className="flex items-center gap-1.5 text-sm font-medium text-stone-900">
+                <GlobeIcon className="h-4 w-4 shrink-0" />
+                List me in the public directory
+              </span>
+              <span className="mt-0.5 block text-xs leading-relaxed text-stone-500">
+                Shows your name, badge, bio, and specialties — never your license number or email —
+                to visitors who aren't signed in.
+              </span>
+            </span>
+          </label>
+
           <div className="flex items-center justify-between">
             <button className="cc-btn" type="submit" disabled={saving}>
               {saving ? 'Saving…' : 'Save profile'}
@@ -195,6 +222,8 @@ export default function Profile({ me, onUpdated, onSignedOut }) {
           </div>
           {credentialError && <p className="text-sm text-status-denied">{credentialError}</p>}
         </form>
+
+        <PushNotificationSettings />
 
         <button
           onClick={logout}

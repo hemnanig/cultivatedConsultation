@@ -1,0 +1,49 @@
+databaseChangeLog:
+  - changeSet:
+      id: 016-create-push-subscription
+      author: cultivated-consultation
+      changes:
+        - createTable:
+            schemaName: cultivated_consultation
+            tableName: push_subscription
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_push_subscription_user
+                    references: cultivated_consultation.app_user(id)
+              # Push service endpoint URL — can be long (FCM/Mozilla push URLs), not a fixed-width value.
+              - column:
+                  name: endpoint
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: p256dh_key
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: auth_key
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP WITH TIME ZONE
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            schemaName: cultivated_consultation
+            tableName: push_subscription
+            columnNames: endpoint
+            constraintName: uq_push_subscription_endpoint

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Avatar } from './ui.jsx'
+import { IncognitoIcon } from './icons.jsx'
 
 /**
  * Shared by the public feed and group feeds — createPost is injected so this
@@ -8,10 +9,22 @@ import { Avatar } from './ui.jsx'
  * LinkedIn-style collapsed/expanded composer: starts as a single tappable
  * row (avatar + rounded pill) and opens into the full textarea on click,
  * rather than always showing an open text box.
+ *
+ * allowAnonymous is only ever true on the public feed (Home) — group posts
+ * are never anonymous, so GroupDetail doesn't pass it and this stays hidden
+ * there. createPost is always called as (content, anonymous); callers that
+ * don't care about the second argument just ignore it.
  */
-export default function PostComposer({ me, createPost, onCreated, label = 'Ask a de-identified consultation question' }) {
+export default function PostComposer({
+  me,
+  createPost,
+  onCreated,
+  label = 'Ask a de-identified consultation question',
+  allowAnonymous = false,
+}) {
   const [expanded, setExpanded] = useState(false)
   const [content, setContent] = useState('')
+  const [anonymous, setAnonymous] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState(null)
 
@@ -21,8 +34,9 @@ export default function PostComposer({ me, createPost, onCreated, label = 'Ask a
     setSubmitting(true)
     setError(null)
     try {
-      await createPost(content.trim())
+      await createPost(content.trim(), anonymous)
       setContent('')
+      setAnonymous(false)
       setExpanded(false)
       onCreated()
     } catch (err) {
@@ -34,6 +48,7 @@ export default function PostComposer({ me, createPost, onCreated, label = 'Ask a
 
   function cancel() {
     setContent('')
+    setAnonymous(false)
     setError(null)
     setExpanded(false)
   }
@@ -61,8 +76,26 @@ export default function PostComposer({ me, createPost, onCreated, label = 'Ask a
               placeholder="Describe the clinical question — omit names, dates, and any identifying details."
             />
           </div>
+
+          {allowAnonymous && (
+            <label className="flex cursor-pointer items-center gap-2 self-start rounded-full border border-stone-200 bg-stone-50 px-3 py-1.5 text-xs font-medium text-stone-600 transition-colors hover:bg-stone-100">
+              <input
+                type="checkbox"
+                checked={anonymous}
+                onChange={(e) => setAnonymous(e.target.checked)}
+                className="h-3.5 w-3.5 rounded border-stone-300 text-brand-600 focus:ring-brand-500"
+              />
+              <IncognitoIcon className="h-4 w-4 shrink-0" />
+              Post anonymously
+            </label>
+          )}
+
           <div className="flex items-center justify-between gap-4">
-            <span className="text-xs text-stone-500">Do not post PHI or identifying client information.</span>
+            <span className="text-xs text-stone-500">
+              {anonymous
+                ? 'Your name is hidden — your credential badge still shows.'
+                : 'Do not post PHI or identifying client information.'}
+            </span>
             <div className="flex shrink-0 items-center gap-2">
               <button type="button" className="cc-btn-ghost" onClick={cancel} disabled={submitting}>
                 Cancel

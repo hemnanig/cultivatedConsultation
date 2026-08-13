@@ -2,7 +2,18 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../api.js'
 import { Avatar } from './ui.jsx'
-import { InfoIcon, ShieldIcon, LogOutIcon, BellIcon, QuestionIcon, EnvelopeIcon, LockIcon, DocumentIcon } from './icons.jsx'
+import {
+  InfoIcon,
+  ShieldIcon,
+  LogOutIcon,
+  BellIcon,
+  QuestionIcon,
+  EnvelopeIcon,
+  LockIcon,
+  DocumentIcon,
+  BriefcaseIcon,
+  GlobeIcon,
+} from './icons.jsx'
 import ThemeToggle from './ThemeToggle.jsx'
 
 /**
@@ -56,6 +67,26 @@ export default function MoreSheet({ me, onSignedOut, onClose }) {
             </span>
           )}
         </Link>
+
+        <Link
+          to="/opportunities"
+          onClick={onClose}
+          className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-stone-700 hover:bg-stone-50"
+        >
+          <BriefcaseIcon className="h-5 w-5 shrink-0" />
+          Opportunities
+        </Link>
+
+        <Link
+          to="/public-directory"
+          onClick={onClose}
+          className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-stone-700 hover:bg-stone-50"
+        >
+          <GlobeIcon className="h-5 w-5 shrink-0" />
+          Public directory
+        </Link>
+
+        <div className="my-2 border-t border-stone-100" />
 
         <Link
           to="/about"

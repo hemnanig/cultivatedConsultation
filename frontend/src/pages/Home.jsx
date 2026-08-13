@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { api } from '../api.js'
 import PostComposer from '../components/PostComposer.jsx'
 import PostList from '../components/PostList.jsx'
+import AnnouncementBanner from '../components/AnnouncementBanner.jsx'
 import AppLayout from '../components/AppLayout.jsx'
 import { EmptyState, Spinner, CredentialStatusBadge } from '../components/ui.jsx'
 import { SearchIcon, GroupIcon, ShieldIcon, ChevronRightIcon } from '../components/icons.jsx'
@@ -59,7 +60,9 @@ export default function Home({ me, onSignedOut }) {
               </div>
             </form>
 
-            <PostComposer me={me} createPost={api.createPost} onCreated={load} />
+            <AnnouncementBanner />
+
+            <PostComposer me={me} createPost={api.createPost} onCreated={load} allowAnonymous />
 
             {error && (
               <p className="rounded-lg bg-status-denied-bg px-4 py-3 text-sm text-status-denied">{error}</p>

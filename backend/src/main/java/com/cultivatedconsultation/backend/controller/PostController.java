@@ -41,9 +41,9 @@ public class PostController {
 
     @GetMapping
     public List<PostResponse> list(Authentication authentication) {
-        requireApproved(authentication);
+        AppUser me = requireApproved(authentication);
         return postRepository.findAllWithAuthorOrderByCreatedAtDesc().stream()
-                .map(PostResponse::from)
+                .map(p -> PostResponse.from(p, me))
                 .toList();
     }
 
@@ -54,7 +54,8 @@ public class PostController {
         Post post = new Post();
         post.setAuthor(author);
         post.setContent(request.content());
-        return PostResponse.from(postRepository.save(post));
+        post.setAnonymous(request.anonymous());
+        return PostResponse.from(postRepository.save(post), author);
     }
 
     @PostMapping("/{postId}/replies")

@@ -44,6 +44,7 @@ public class MeController {
         if (request.badge() != null) user.setBadge(blankToNull(request.badge()));
         if (request.bio() != null) user.setBio(blankToNull(request.bio()));
         if (request.specialties() != null) user.setSpecialties(blankToNull(request.specialties()));
+        if (request.publicDirectoryOptIn() != null) user.setPublicDirectoryOptIn(request.publicDirectoryOptIn());
         return MeResponse.from(appUserRepository.save(user));
     }
 

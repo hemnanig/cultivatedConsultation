@@ -20,3 +20,18 @@ databaseChangeLog:
   - include:
       file: db/changelog/006-add-notifications.yaml
       relativeToChangelogFile: false
+  - include:
+      file: db/changelog/007-add-anonymous-posts.yaml
+      relativeToChangelogFile: false
+  - include:
+      file: db/changelog/008-add-announcements.yaml
+      relativeToChangelogFile: false
+  - include:
+      file: db/changelog/009-add-opportunities.yaml
+      relativeToChangelogFile: false
+  - include:
+      file: db/changelog/010-add-public-directory.yaml
+      relativeToChangelogFile: false
+  - include:
+      file: db/changelog/011-add-push-subscriptions.yaml
+      relativeToChangelogFile: false
