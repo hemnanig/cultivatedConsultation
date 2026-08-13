@@ -3,11 +3,13 @@ package com.cultivatedconsultation.backend.controller;
 import com.cultivatedconsultation.backend.dto.Dtos.*;
 import com.cultivatedconsultation.backend.model.AppUser;
 import com.cultivatedconsultation.backend.model.MembershipStatus;
+import com.cultivatedconsultation.backend.model.NotificationType;
 import com.cultivatedconsultation.backend.model.Post;
 import com.cultivatedconsultation.backend.model.Reply;
 import com.cultivatedconsultation.backend.repository.PostRepository;
 import com.cultivatedconsultation.backend.repository.ReplyRepository;
 import com.cultivatedconsultation.backend.security.CurrentUserService;
+import com.cultivatedconsultation.backend.service.NotificationService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -27,12 +29,14 @@ public class PostController {
     private final PostRepository postRepository;
     private final ReplyRepository replyRepository;
     private final CurrentUserService currentUserService;
+    private final NotificationService notificationService;
 
     public PostController(PostRepository postRepository, ReplyRepository replyRepository,
-                           CurrentUserService currentUserService) {
+                           CurrentUserService currentUserService, NotificationService notificationService) {
         this.postRepository = postRepository;
         this.replyRepository = replyRepository;
         this.currentUserService = currentUserService;
+        this.notificationService = notificationService;
     }
 
     @GetMapping
@@ -64,7 +68,14 @@ public class PostController {
         reply.setPost(post);
         reply.setAuthor(author);
         reply.setContent(request.content());
-        return ReplyResponse.from(replyRepository.save(reply));
+        ReplyResponse response = ReplyResponse.from(replyRepository.save(reply));
+
+        if (!post.getAuthor().getId().equals(author.getId())) {
+            notificationService.notify(post.getAuthor(), NotificationType.NEW_REPLY,
+                    author.getName() + " replied to your post", "/");
+        }
+
+        return response;
     }
 
     private AppUser requireApproved(Authentication authentication) {

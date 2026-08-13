@@ -30,6 +30,15 @@ export function UsersIcon(props) {
   )
 }
 
+export function GroupIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" {...base} {...props}>
+      <rect x="3.5" y="4.5" width="12" height="9" rx="2" />
+      <path d="M8 17.5h9a2.5 2.5 0 0 0 2.5-2.5V8" />
+    </svg>
+  )
+}
+
 export function InfoIcon(props) {
   return (
     <svg viewBox="0 0 24 24" {...base} {...props}>
@@ -64,6 +73,34 @@ export function LogOutIcon(props) {
       <path d="M9 20H5.5A1.5 1.5 0 0 1 4 18.5v-13A1.5 1.5 0 0 1 5.5 4H9" />
       <path d="M16 16.5 21 12l-5-4.5" />
       <path d="M21 12H9" />
+    </svg>
+  )
+}
+
+export function CheckBadgeIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" {...base} {...props}>
+      <path d="M12 3.5 19 6.5v5.2c0 4.4-3 7.6-7 8.8-4-1.2-7-4.4-7-8.8V6.5Z" fill="currentColor" stroke="none" opacity="0.15" />
+      <path d="M12 3.5 19 6.5v5.2c0 4.4-3 7.6-7 8.8-4-1.2-7-4.4-7-8.8V6.5Z" />
+      <path d="M9 12l2 2 4-4.2" />
+    </svg>
+  )
+}
+
+export function MailIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" {...base} {...props}>
+      <rect x="3" y="5.5" width="18" height="13" rx="2" />
+      <path d="M3.5 6.5 12 13l8.5-6.5" />
+    </svg>
+  )
+}
+
+export function BellIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" {...base} {...props}>
+      <path d="M6 10a6 6 0 1 1 12 0c0 4 1.5 5.5 1.5 5.5H4.5S6 14 6 10Z" />
+      <path d="M10 19a2 2 0 0 0 4 0" />
     </svg>
   )
 }

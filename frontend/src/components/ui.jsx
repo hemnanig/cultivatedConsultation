@@ -1,4 +1,5 @@
 import { initials } from '../lib/format.js'
+import { CheckBadgeIcon } from './icons.jsx'
 
 /** Circular initials avatar — no photo upload in the POC, so this is the member's visual identity. */
 export function Avatar({ name, size = 'md' }) {
@@ -17,12 +18,36 @@ export function Avatar({ name, size = 'md' }) {
   )
 }
 
-/** Membership badge (credential/role) rendered as a pill instead of plain inline text. */
-export function BadgePill({ badge }) {
+/**
+ * Membership badge (credential/role) rendered as a pill instead of plain
+ * inline text. Pass credentialStatus to show a small verified checkmark when
+ * an admin has confirmed the member's license — otherwise the badge is just
+ * self-reported text, same as before.
+ */
+export function BadgePill({ badge, credentialStatus }) {
   if (!badge) return null
   return (
-    <span className="inline-flex items-center rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-medium text-brand-700">
+    <span className="inline-flex items-center gap-1 rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-medium text-brand-700">
       {badge}
+      {credentialStatus === 'VERIFIED' && (
+        <CheckBadgeIcon className="h-3.5 w-3.5 text-brand-600" role="img" aria-label="Verified credential" />
+      )}
+    </span>
+  )
+}
+
+/** Unverified / pending review / verified / rejected — credential review status. */
+export function CredentialStatusBadge({ status }) {
+  const map = {
+    UNVERIFIED: { label: 'Not submitted', classes: 'bg-stone-100 text-stone-500' },
+    PENDING_REVIEW: { label: 'Pending review', classes: 'bg-status-pending-bg text-status-pending' },
+    VERIFIED: { label: 'Verified', classes: 'bg-status-approved-bg text-status-approved' },
+    REJECTED: { label: 'Rejected', classes: 'bg-status-denied-bg text-status-denied' },
+  }
+  const entry = map[status] ?? { label: status, classes: 'bg-stone-100 text-stone-600' }
+  return (
+    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${entry.classes}`}>
+      {entry.label}
     </span>
   )
 }

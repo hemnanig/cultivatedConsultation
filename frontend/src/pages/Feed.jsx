@@ -46,7 +46,7 @@ export default function Feed({ me, onSignedOut }) {
           </div>
         </form>
 
-        <PostComposer onCreated={load} />
+        <PostComposer createPost={api.createPost} onCreated={load} />
 
         {error && (
           <p className="rounded-lg bg-status-denied-bg px-4 py-3 text-sm text-status-denied">{error}</p>
@@ -62,7 +62,7 @@ export default function Feed({ me, onSignedOut }) {
           />
         )}
 
-        {posts && posts.length > 0 && <PostList posts={posts} onChanged={load} />}
+        {posts && posts.length > 0 && <PostList posts={posts} onChanged={load} createReply={api.createReply} />}
       </main>
     </AppLayout>
   )

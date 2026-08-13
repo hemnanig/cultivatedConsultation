@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { api } from '../api.js'
 import AppLayout from '../components/AppLayout.jsx'
 import { Avatar, BadgePill, SpecialtyPill, EmptyState, Spinner } from '../components/ui.jsx'
+import { MailIcon } from '../components/icons.jsx'
 import { parseSpecialties } from '../lib/format.js'
 
 export default function Directory({ me, onSignedOut }) {
@@ -97,7 +98,7 @@ export default function Directory({ me, onSignedOut }) {
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="font-medium text-stone-900">{m.name}</span>
-                    <BadgePill badge={m.badge} />
+                    <BadgePill badge={m.badge} credentialStatus={m.credentialStatus} />
                   </div>
                   {m.bio && <p className="mt-1 text-sm text-stone-600">{m.bio}</p>}
                   {parseSpecialties(m.specialties).length > 0 && (
@@ -108,6 +109,16 @@ export default function Directory({ me, onSignedOut }) {
                     </div>
                   )}
                 </div>
+                {m.id !== me.id && (
+                  <Link
+                    to={`/messages/${m.id}`}
+                    state={{ member: m }}
+                    className="cc-btn-secondary cc-btn-sm shrink-0"
+                  >
+                    <MailIcon className="h-4 w-4" />
+                    Message
+                  </Link>
+                )}
               </li>
             ))}
           </ul>

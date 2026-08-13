@@ -1,8 +1,10 @@
 package com.cultivatedconsultation.backend.controller;
 
 import com.cultivatedconsultation.backend.dto.Dtos.MeResponse;
+import com.cultivatedconsultation.backend.dto.Dtos.SubmitCredentialRequest;
 import com.cultivatedconsultation.backend.dto.Dtos.UpdateProfileRequest;
 import com.cultivatedconsultation.backend.model.AppUser;
+import com.cultivatedconsultation.backend.model.CredentialStatus;
 import com.cultivatedconsultation.backend.repository.AppUserRepository;
 import com.cultivatedconsultation.backend.security.CurrentUserService;
 import jakarta.validation.Valid;
@@ -42,6 +44,20 @@ public class MeController {
         if (request.badge() != null) user.setBadge(blankToNull(request.badge()));
         if (request.bio() != null) user.setBio(blankToNull(request.bio()));
         if (request.specialties() != null) user.setSpecialties(blankToNull(request.specialties()));
+        return MeResponse.from(appUserRepository.save(user));
+    }
+
+    /**
+     * Submits (or resubmits) a license number + state for admin review. Always
+     * moves credentialStatus to PENDING_REVIEW, including a resubmission after
+     * REJECTED — there's no separate "appeal" flow in the POC.
+     */
+    @PatchMapping("/api/me/credential")
+    public MeResponse submitCredential(Authentication authentication, @Valid @RequestBody SubmitCredentialRequest request) {
+        AppUser user = currentUserService.resolve(authentication);
+        user.setLicenseNumber(request.licenseNumber().trim());
+        user.setLicenseState(request.licenseState().trim());
+        user.setCredentialStatus(CredentialStatus.PENDING_REVIEW);
         return MeResponse.from(appUserRepository.save(user));
     }
 

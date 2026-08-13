@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../api.js'
 import AppLayout from '../components/AppLayout.jsx'
-import { Avatar, SpecialtyPill } from '../components/ui.jsx'
+import { Avatar, SpecialtyPill, CredentialStatusBadge } from '../components/ui.jsx'
 import { parseSpecialties } from '../lib/format.js'
 
 export default function Profile({ me, onUpdated, onSignedOut }) {
@@ -12,6 +12,12 @@ export default function Profile({ me, onUpdated, onSignedOut }) {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
   const [saved, setSaved] = useState(false)
+
+  const [licenseNumber, setLicenseNumber] = useState(me.licenseNumber || '')
+  const [licenseState, setLicenseState] = useState(me.licenseState || '')
+  const [submittingCredential, setSubmittingCredential] = useState(false)
+  const [credentialError, setCredentialError] = useState(null)
+  const [credentialSubmitted, setCredentialSubmitted] = useState(false)
 
   async function submit(e) {
     e.preventDefault()
@@ -26,6 +32,23 @@ export default function Profile({ me, onUpdated, onSignedOut }) {
       setError(err.message)
     } finally {
       setSaving(false)
+    }
+  }
+
+  async function submitCredential(e) {
+    e.preventDefault()
+    if (!licenseNumber.trim() || !licenseState.trim()) return
+    setSubmittingCredential(true)
+    setCredentialError(null)
+    setCredentialSubmitted(false)
+    try {
+      await api.submitCredential(licenseNumber.trim(), licenseState.trim())
+      await onUpdated()
+      setCredentialSubmitted(true)
+    } catch (err) {
+      setCredentialError(err.message)
+    } finally {
+      setSubmittingCredential(false)
     }
   }
 
@@ -117,6 +140,60 @@ export default function Profile({ me, onUpdated, onSignedOut }) {
             {saved && <span className="text-sm text-status-approved">Saved.</span>}
           </div>
           {error && <p className="text-sm text-status-denied">{error}</p>}
+        </form>
+
+        <form className="cc-card flex flex-col gap-4 p-6" onSubmit={submitCredential}>
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <h2 className="text-sm font-semibold text-stone-900">Credential verification</h2>
+              <p className="mt-0.5 text-xs text-stone-500">
+                Real license verification, separate from the credential/role text above — an admin
+                confirms it before your badge shows a verified checkmark.
+              </p>
+            </div>
+            <CredentialStatusBadge status={me.credentialStatus || 'UNVERIFIED'} />
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label htmlFor="license-number" className="text-sm font-medium text-stone-900">
+                License number
+              </label>
+              <input
+                id="license-number"
+                className="cc-input mt-1.5"
+                type="text"
+                value={licenseNumber}
+                onChange={(e) => setLicenseNumber(e.target.value)}
+                placeholder="e.g. MFT12345"
+              />
+            </div>
+            <div>
+              <label htmlFor="license-state" className="text-sm font-medium text-stone-900">
+                Licensing state
+              </label>
+              <input
+                id="license-state"
+                className="cc-input mt-1.5"
+                type="text"
+                value={licenseState}
+                onChange={(e) => setLicenseState(e.target.value)}
+                placeholder="e.g. Florida"
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <button
+              className="cc-btn"
+              type="submit"
+              disabled={submittingCredential || !licenseNumber.trim() || !licenseState.trim()}
+            >
+              {submittingCredential ? 'Submitting…' : 'Submit for review'}
+            </button>
+            {credentialSubmitted && <span className="text-sm text-status-approved">Submitted for review.</span>}
+          </div>
+          {credentialError && <p className="text-sm text-status-denied">{credentialError}</p>}
         </form>
 
         <button

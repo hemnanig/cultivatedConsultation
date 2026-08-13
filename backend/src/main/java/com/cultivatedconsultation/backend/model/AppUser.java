@@ -39,6 +39,17 @@ public class AppUser {
     @Column(length = 500)
     private String specialties;
 
+    // Real credential verification, separate from the self-reported `badge` field above.
+    @Column(name = "license_number", length = 100)
+    private String licenseNumber;
+
+    @Column(name = "license_state", length = 50)
+    private String licenseState;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "credential_status", nullable = false)
+    private CredentialStatus credentialStatus = CredentialStatus.UNVERIFIED;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "membership_status", nullable = false)
     private MembershipStatus membershipStatus = MembershipStatus.PENDING;

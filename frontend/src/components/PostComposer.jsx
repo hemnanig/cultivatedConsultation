@@ -1,7 +1,10 @@
 import { useState } from 'react'
-import { api } from '../api.js'
 
-export default function PostComposer({ onCreated }) {
+/**
+ * Shared by the public feed and group feeds — createPost is injected so this
+ * component doesn't care which endpoint it's posting to.
+ */
+export default function PostComposer({ createPost, onCreated, label = 'Ask a de-identified consultation question' }) {
   const [content, setContent] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState(null)
@@ -12,7 +15,7 @@ export default function PostComposer({ onCreated }) {
     setSubmitting(true)
     setError(null)
     try {
-      await api.createPost(content.trim())
+      await createPost(content.trim())
       setContent('')
       onCreated()
     } catch (err) {
@@ -25,7 +28,7 @@ export default function PostComposer({ onCreated }) {
   return (
     <form className="cc-card flex flex-col gap-3 p-5" onSubmit={submit}>
       <label htmlFor="post-content" className="text-sm font-medium text-stone-900">
-        Ask a de-identified consultation question
+        {label}
       </label>
       <textarea
         id="post-content"

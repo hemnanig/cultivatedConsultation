@@ -9,6 +9,11 @@ import About from './pages/About.jsx'
 import Directory from './pages/Directory.jsx'
 import Profile from './pages/Profile.jsx'
 import Admin from './pages/Admin.jsx'
+import Groups from './pages/Groups.jsx'
+import GroupDetail from './pages/GroupDetail.jsx'
+import Messages from './pages/Messages.jsx'
+import MessageThread from './pages/MessageThread.jsx'
+import Notifications from './pages/Notifications.jsx'
 import { Spinner } from './components/ui.jsx'
 
 export default function App() {
@@ -61,6 +66,11 @@ export default function App() {
         <>
           <Route path="/" element={<Feed me={me} onSignedOut={onSignedOut} />} />
           <Route path="/directory" element={<Directory me={me} onSignedOut={onSignedOut} />} />
+          <Route path="/groups" element={<Groups me={me} onSignedOut={onSignedOut} />} />
+          <Route path="/groups/:groupId" element={<GroupDetail me={me} onSignedOut={onSignedOut} />} />
+          <Route path="/messages" element={<Messages me={me} onSignedOut={onSignedOut} />} />
+          <Route path="/messages/:userId" element={<MessageThread me={me} onSignedOut={onSignedOut} />} />
+          <Route path="/notifications" element={<Notifications me={me} onSignedOut={onSignedOut} />} />
           <Route path="/about" element={<About me={me} onSignedOut={onSignedOut} />} />
           <Route path="/profile" element={<Profile me={me} onUpdated={refreshMe} onSignedOut={onSignedOut} />} />
           <Route path="/admin" element={<Admin me={me} onSignedOut={onSignedOut} />} />

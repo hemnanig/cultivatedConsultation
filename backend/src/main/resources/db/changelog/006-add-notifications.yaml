@@ -1,0 +1,53 @@
+databaseChangeLog:
+  - changeSet:
+      id: 011-create-notification
+      author: cultivated-consultation
+      changes:
+        - createTable:
+            schemaName: cultivated_consultation
+            tableName: notification
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: recipient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_notification_recipient
+                    references: cultivated_consultation.app_user(id)
+              - column:
+                  name: type
+                  type: VARCHAR(32)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: message
+                  type: VARCHAR(500)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: link_path
+                  type: VARCHAR(255)
+              - column:
+                  name: created_at
+                  type: TIMESTAMP WITH TIME ZONE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: read_at
+                  type: TIMESTAMP WITH TIME ZONE
+        - createIndex:
+            schemaName: cultivated_consultation
+            indexName: idx_notification_recipient_read
+            tableName: notification
+            columns:
+              - column:
+                  name: recipient_id
+              - column:
+                  name: read_at

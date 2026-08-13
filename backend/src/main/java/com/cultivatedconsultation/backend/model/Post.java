@@ -24,6 +24,12 @@ public class Post {
     @JoinColumn(name = "author_id", nullable = false)
     private AppUser author;
 
+    // null = public community feed. Non-null = scoped to that Group of Interest,
+    // only visible/postable by its members.
+    @ManyToOne
+    @JoinColumn(name = "group_id")
+    private ConsultationGroup group;
+
     @Column(nullable = false, length = 4000)
     private String content;
 

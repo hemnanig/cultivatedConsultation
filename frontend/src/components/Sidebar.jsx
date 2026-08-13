@@ -1,12 +1,16 @@
+import { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import logo from '../assets/images/CC-1024-x-1024-px.png'
 import { Avatar } from './ui.jsx'
-import { HomeIcon, UsersIcon, InfoIcon, ShieldIcon, LogOutIcon } from './icons.jsx'
+import { HomeIcon, UsersIcon, GroupIcon, MailIcon, BellIcon, InfoIcon, ShieldIcon, LogOutIcon } from './icons.jsx'
 import { api } from '../api.js'
 
 const navItems = [
   { to: '/', label: 'Feed', icon: HomeIcon, end: true },
   { to: '/directory', label: 'Directory', icon: UsersIcon },
+  { to: '/groups', label: 'Groups', icon: GroupIcon },
+  { to: '/messages', label: 'Messages', icon: MailIcon },
+  { to: '/notifications', label: 'Notifications', icon: BellIcon },
   { to: '/about', label: 'About', icon: InfoIcon },
 ]
 
@@ -15,6 +19,12 @@ const linkClasses = ({ isActive }) =>
   (isActive ? 'bg-brand-50 text-brand-700' : 'text-stone-600 hover:bg-stone-100 hover:text-stone-900')
 
 export default function Sidebar({ me, onSignedOut }) {
+  const [unreadCount, setUnreadCount] = useState(0)
+
+  useEffect(() => {
+    api.unreadNotificationCount().then((r) => setUnreadCount(r.count)).catch(() => {})
+  }, [])
+
   async function logout() {
     await api.logout()
     onSignedOut()
@@ -42,7 +52,12 @@ export default function Sidebar({ me, onSignedOut }) {
         {navItems.map(({ to, label, icon: Icon, end }) => (
           <NavLink key={to} to={to} end={end} className={linkClasses}>
             <Icon className="h-5 w-5 shrink-0" />
-            {label}
+            <span className="flex-1">{label}</span>
+            {to === '/notifications' && unreadCount > 0 && (
+              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-600 px-1.5 text-xs font-semibold text-white">
+                {unreadCount}
+              </span>
+            )}
           </NavLink>
         ))}
         {me.admin && (

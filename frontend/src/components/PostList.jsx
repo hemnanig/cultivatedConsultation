@@ -1,19 +1,22 @@
 import { useState } from 'react'
-import { api } from '../api.js'
 import { Avatar, BadgePill } from './ui.jsx'
 import { formatRelativeTime } from '../lib/format.js'
 
-export default function PostList({ posts, onChanged }) {
+/**
+ * Shared by the public feed and group feeds — createReply is injected (takes
+ * a postId) so this component doesn't care which endpoint it's replying to.
+ */
+export default function PostList({ posts, onChanged, createReply }) {
   return (
     <ul className="flex flex-col gap-4">
       {posts.map((post) => (
-        <PostItem key={post.id} post={post} onChanged={onChanged} />
+        <PostItem key={post.id} post={post} onChanged={onChanged} createReply={createReply} />
       ))}
     </ul>
   )
 }
 
-function PostItem({ post, onChanged }) {
+function PostItem({ post, onChanged, createReply }) {
   const [replyText, setReplyText] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState(null)
@@ -24,7 +27,7 @@ function PostItem({ post, onChanged }) {
     setSubmitting(true)
     setError(null)
     try {
-      await api.createReply(post.id, replyText.trim())
+      await createReply(post.id, replyText.trim())
       setReplyText('')
       onChanged()
     } catch (err) {
@@ -41,7 +44,7 @@ function PostItem({ post, onChanged }) {
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <span className="font-medium text-stone-900">{post.author.name}</span>
-            <BadgePill badge={post.author.badge} />
+            <BadgePill badge={post.author.badge} credentialStatus={post.author.credentialStatus} />
             <span className="text-xs text-stone-400">· {formatRelativeTime(post.createdAt)}</span>
           </div>
           <p className="mt-1.5 whitespace-pre-wrap text-sm leading-relaxed text-stone-800">{post.content}</p>
@@ -56,7 +59,7 @@ function PostItem({ post, onChanged }) {
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="text-sm font-medium text-stone-900">{reply.author.name}</span>
-                  <BadgePill badge={reply.author.badge} />
+                  <BadgePill badge={reply.author.badge} credentialStatus={reply.author.credentialStatus} />
                   <span className="text-xs text-stone-400">· {formatRelativeTime(reply.createdAt)}</span>
                 </div>
                 <p className="text-sm text-stone-700">{reply.content}</p>

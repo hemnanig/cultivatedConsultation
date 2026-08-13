@@ -42,6 +42,8 @@ export const api = {
   me: () => request('/api/me'),
   logout: () => request('/api/logout', { method: 'POST' }),
   updateMe: (fields) => request('/api/me', { method: 'PATCH', body: JSON.stringify(fields) }),
+  submitCredential: (licenseNumber, licenseState) =>
+    request('/api/me/credential', { method: 'PATCH', body: JSON.stringify({ licenseNumber, licenseState }) }),
   listPosts: () => request('/api/posts'),
   createPost: (content) => request('/api/posts', { method: 'POST', body: JSON.stringify({ content }) }),
   createReply: (postId, content) =>
@@ -50,7 +52,38 @@ export const api = {
     request(`/api/members${specialty ? `?specialty=${encodeURIComponent(specialty)}` : ''}`),
   pendingUsers: () => request('/api/admin/users/pending'),
   approveUser: (userId) => request(`/api/admin/users/${userId}/approve`, { method: 'POST' }),
-  denyUser: (userId) => request(`/api/admin/users/${userId}/deny`, { method: 'POST' })
+  denyUser: (userId) => request(`/api/admin/users/${userId}/deny`, { method: 'POST' }),
+  pendingCredentials: () => request('/api/admin/users/credentials/pending'),
+  verifyCredential: (userId) => request(`/api/admin/users/${userId}/credential/verify`, { method: 'POST' }),
+  rejectCredential: (userId) => request(`/api/admin/users/${userId}/credential/reject`, { method: 'POST' }),
+
+  // Groups of Interest
+  listGroups: () => request('/api/groups'),
+  createGroup: (name, description) =>
+    request('/api/groups', { method: 'POST', body: JSON.stringify({ name, description }) }),
+  getGroup: (groupId) => request(`/api/groups/${groupId}`),
+  listGroupMembers: (groupId) => request(`/api/groups/${groupId}/members`),
+  addGroupMember: (groupId, memberId) =>
+    request(`/api/groups/${groupId}/members`, { method: 'POST', body: JSON.stringify({ memberId }) }),
+  removeGroupMember: (groupId, memberId) =>
+    request(`/api/groups/${groupId}/members/${memberId}`, { method: 'DELETE' }),
+  listGroupPosts: (groupId) => request(`/api/groups/${groupId}/posts`),
+  createGroupPost: (groupId, content) =>
+    request(`/api/groups/${groupId}/posts`, { method: 'POST', body: JSON.stringify({ content }) }),
+  createGroupReply: (groupId, postId, content) =>
+    request(`/api/groups/${groupId}/posts/${postId}/replies`, { method: 'POST', body: JSON.stringify({ content }) }),
+
+  // Direct messaging
+  listConversations: () => request('/api/messages/conversations'),
+  getThread: (userId) => request(`/api/messages/with/${userId}`),
+  sendMessage: (recipientId, content) =>
+    request('/api/messages', { method: 'POST', body: JSON.stringify({ recipientId, content }) }),
+
+  // Notifications
+  listNotifications: () => request('/api/notifications'),
+  unreadNotificationCount: () => request('/api/notifications/unread-count'),
+  markNotificationRead: (id) => request(`/api/notifications/${id}/read`, { method: 'POST' }),
+  markAllNotificationsRead: () => request('/api/notifications/read-all', { method: 'POST' })
 }
 
 export function googleLoginUrl() {

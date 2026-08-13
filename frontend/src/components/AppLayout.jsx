@@ -11,7 +11,7 @@ export default function AppLayout({ me, onSignedOut, children }) {
     <div className="min-h-screen bg-stone-50">
       <Sidebar me={me} onSignedOut={onSignedOut} />
       <div className="pb-16 md:ml-64 md:pb-0">{children}</div>
-      <BottomNav me={me} />
+      <BottomNav me={me} onSignedOut={onSignedOut} />
     </div>
   )
 }
