@@ -44,14 +44,21 @@ public class PushNotificationService {
             Security.addProvider(new BouncyCastleProvider());
         }
 
-        if (vapidPublicKey == null || vapidPublicKey.isBlank() || vapidPrivateKey == null || vapidPrivateKey.isBlank()) {
+        // Trim defensively — a trailing newline/space pasted into Render's env var UI (or
+        // captured by a shell `export`) is invisible here but breaks base64url decoding on
+        // the frontend with a cryptic browser exception that gives no hint why.
+        String publicKey = vapidPublicKey == null ? "" : vapidPublicKey.trim();
+        String privateKey = vapidPrivateKey == null ? "" : vapidPrivateKey.trim();
+        String subject = vapidSubject == null ? "" : vapidSubject.trim();
+
+        if (publicKey.isBlank() || privateKey.isBlank()) {
             log.warn("VAPID_PUBLIC_KEY/VAPID_PRIVATE_KEY not set — push notifications are disabled. " +
                     "In-app notifications still work normally.");
             return;
         }
 
         try {
-            this.pushService = new PushService(vapidPublicKey, vapidPrivateKey, vapidSubject);
+            this.pushService = new PushService(publicKey, privateKey, subject);
         } catch (Exception e) {
             log.warn("Failed to initialize web-push with the configured VAPID keys — push notifications " +
                     "are disabled. Double-check VAPID_PUBLIC_KEY/VAPID_PRIVATE_KEY. Cause: {}", e.getMessage());

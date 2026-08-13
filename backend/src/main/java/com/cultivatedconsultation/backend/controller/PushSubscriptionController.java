@@ -35,10 +35,15 @@ public class PushSubscriptionController {
         this.vapidPublicKey = vapidPublicKey;
     }
 
-    /** Empty string if VAPID isn't configured — frontend just skips offering push in that case. */
+    /**
+     * Empty string if VAPID isn't configured — frontend just skips offering push in that
+     * case. Trimmed defensively: a trailing newline/space in the env var (easy to introduce
+     * pasting into Render's dashboard) is invisible here but breaks base64url decoding in
+     * the browser with a cryptic exception that gives no hint why.
+     */
     @GetMapping("/vapid-public-key")
     public Map<String, String> vapidPublicKey() {
-        return Map.of("publicKey", vapidPublicKey == null ? "" : vapidPublicKey);
+        return Map.of("publicKey", vapidPublicKey == null ? "" : vapidPublicKey.trim());
     }
 
     @PostMapping("/subscriptions")

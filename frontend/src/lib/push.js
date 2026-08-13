@@ -1,11 +1,37 @@
 import { api } from '../api.js'
 
-/** Web Push VAPID keys are base64url — pushManager.subscribe wants a Uint8Array. */
+/**
+ * Web Push VAPID keys are base64url — pushManager.subscribe wants a
+ * Uint8Array. Trims first: a stray trailing newline/space on the env var
+ * (easy to introduce copy-pasting into Render's dashboard, or via a shell
+ * `export` that captured a newline) is invisible in the UI but makes atob()
+ * throw a cryptic "invalid character" / "did not match the expected
+ * pattern"-style DOMException with zero indication of why. Also validates
+ * the decoded key is a well-formed uncompressed P-256 point (65 bytes,
+ * starts with 0x04) so a bad key fails with a message that actually says
+ * what's wrong instead of a raw browser exception.
+ */
 function urlBase64ToUint8Array(base64String) {
-  const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
-  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
-  const rawData = atob(base64)
-  return Uint8Array.from([...rawData].map((c) => c.charCodeAt(0)))
+  const trimmed = (base64String || '').trim()
+  const padding = '='.repeat((4 - (trimmed.length % 4)) % 4)
+  const base64 = (trimmed + padding).replace(/-/g, '+').replace(/_/g, '/')
+
+  let rawData
+  try {
+    rawData = atob(base64)
+  } catch {
+    throw new Error(
+      'The server’s push public key is not valid base64url — check VAPID_PUBLIC_KEY for stray whitespace or a copy-paste error.'
+    )
+  }
+
+  const bytes = Uint8Array.from([...rawData].map((c) => c.charCodeAt(0)))
+  if (bytes.length !== 65 || bytes[0] !== 0x04) {
+    throw new Error(
+      `The server’s push public key is the wrong shape (got ${bytes.length} bytes, expected 65 starting with 0x04) — regenerate VAPID keys and check VAPID_PUBLIC_KEY.`
+    )
+  }
+  return bytes
 }
 
 /** True in any browser that could theoretically support push — doesn't mean the server has VAPID configured. */
@@ -35,11 +61,20 @@ export async function subscribeToPush() {
   const permission = await Notification.requestPermission()
   if (permission !== 'granted') throw new Error('Notification permission was not granted.')
 
+  const applicationServerKey = urlBase64ToUint8Array(publicKey)
   const registration = await navigator.serviceWorker.ready
-  const subscription = await registration.pushManager.subscribe({
-    userVisibleOnly: true,
-    applicationServerKey: urlBase64ToUint8Array(publicKey),
-  })
+
+  let subscription
+  try {
+    subscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey,
+    })
+  } catch (err) {
+    // Surface the browser's own reason (permission, key format, no push
+    // service available, etc.) instead of a bare "subscribe failed".
+    throw new Error(`Browser rejected the push subscription: ${err.message || err.name || 'unknown reason'}`)
+  }
 
   const json = subscription.toJSON()
   await api.subscribePush({
