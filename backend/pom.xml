@@ -52,12 +52,19 @@
             <artifactId>liquibase-core</artifactId>
         </dependency>
         <!-- Web Push (VAPID + RFC 8291 payload encryption) for browser push notifications.
-             See PushNotificationService — this is the one dependency in the project this
-             sandbox could not compile-check; verify with a real `mvn compile` before deploying. -->
+             See PushNotificationService. -->
         <dependency>
             <groupId>nl.martijndwars</groupId>
             <artifactId>web-push</artifactId>
             <version>5.1.1</version>
+        </dependency>
+        <!-- web-push's own POM doesn't declare this, but PushNotificationService registers
+             org.bouncycastle.jce.provider.BouncyCastleProvider directly (needed for the RFC 8291
+             ECDH/AES-GCM payload encryption) — without it, that import doesn't resolve at compile time. -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk18on</artifactId>
+            <version>1.78.1</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
