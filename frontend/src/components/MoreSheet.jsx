@@ -25,6 +25,17 @@ const DISMISS_DISTANCE_RATIO = 0.25
 // px/ms — a flick past this speed dismisses regardless of distance dragged,
 // same as a fast swipe-to-dismiss on an iOS sheet.
 const DISMISS_VELOCITY = 0.5
+// A velocity-based dismiss also requires the drag to have covered at least
+// this much distance first. Without this floor, a single noisy pointermove
+// pair (two samples a fraction of a millisecond apart — real on some
+// high-polling-rate trackpads/touchscreens, and easy to hit from automated
+// input) can compute a spurious huge velocity from a drag that has barely
+// moved, dismissing the sheet on what should read as a light touch.
+const MIN_FLICK_DISTANCE = 24
+// Velocity is measured over a short rolling window, not a single
+// frame-to-frame delta, so one noisy sample pair can't dominate the
+// reading — closer to how the gesture actually felt over the last ~50ms.
+const VELOCITY_WINDOW_MS = 50
 const REDUCED_MOTION_MS = 80
 
 function prefersReducedMotion() {
@@ -68,9 +79,10 @@ export default function MoreSheet({ me, open, onSignedOut, onClose }) {
   const pointerId = useRef(null)
   const startClientY = useRef(0)
   const startDragY = useRef(0)
-  const lastClientY = useRef(0)
-  const lastMoveT = useRef(0)
-  const velocity = useRef(0)
+  // Rolling window of recent {t, y} samples, oldest first — see
+  // VELOCITY_WINDOW_MS. Velocity is derived from the span of this window at
+  // release, not a single frame-to-frame delta.
+  const moveHistory = useRef([])
   const closeTimer = useRef(null)
 
   useEffect(() => {
@@ -122,9 +134,7 @@ export default function MoreSheet({ me, open, onSignedOut, onClose }) {
     const live = liveTranslateY(sheetRef.current)
     startDragY.current = live
     startClientY.current = e.clientY
-    lastClientY.current = e.clientY
-    lastMoveT.current = performance.now()
-    velocity.current = 0
+    moveHistory.current = [{ t: performance.now(), y: e.clientY }]
     setDragTransitionMs(0)
     setDragging(true)
     setDragY(live)
@@ -133,10 +143,9 @@ export default function MoreSheet({ me, open, onSignedOut, onClose }) {
   function handlePointerMove(e) {
     if (pointerId.current !== e.pointerId) return
     const now = performance.now()
-    const dt = now - lastMoveT.current
-    if (dt > 0) velocity.current = (e.clientY - lastClientY.current) / dt
-    lastClientY.current = e.clientY
-    lastMoveT.current = now
+    moveHistory.current.push({ t: now, y: e.clientY })
+    const cutoff = now - VELOCITY_WINDOW_MS
+    while (moveHistory.current.length > 1 && moveHistory.current[0].t < cutoff) moveHistory.current.shift()
 
     let delta = e.clientY - startClientY.current + startDragY.current
     if (delta < 0) delta *= 0.35 // rubber-band: resist dragging past the open position
@@ -148,13 +157,20 @@ export default function MoreSheet({ me, open, onSignedOut, onClose }) {
     pointerId.current = null
     setDragging(false)
 
+    const oldest = moveHistory.current[0]
+    const dt = oldest ? performance.now() - oldest.t : 0
+    // Ignore windows too short to trust — see VELOCITY_WINDOW_MS/MIN_FLICK_DISTANCE.
+    const releaseVelocity = dt > 4 ? (e.clientY - oldest.y) / dt : 0
+
     const sheetHeight = sheetRef.current?.offsetHeight || 400
     const reduced = prefersReducedMotion()
-    const shouldDismiss = dragY > sheetHeight * DISMISS_DISTANCE_RATIO || velocity.current > DISMISS_VELOCITY
+    const shouldDismiss =
+      dragY > sheetHeight * DISMISS_DISTANCE_RATIO ||
+      (dragY > MIN_FLICK_DISTANCE && releaseVelocity > DISMISS_VELOCITY)
 
     if (shouldDismiss) {
       const remaining = Math.max(sheetHeight - Math.max(dragY, 0), 0)
-      const speed = Math.max(velocity.current, 0.7)
+      const speed = Math.max(releaseVelocity, 0.7)
       const duration = reduced ? REDUCED_MOTION_MS : Math.min(Math.max(remaining / speed, 140), 300)
       setDragTransitionMs(duration)
       setDragY(sheetHeight + 60)
