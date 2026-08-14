@@ -44,6 +44,23 @@ public class AdminController {
                 .toList();
     }
 
+    @GetMapping
+    public List<MeResponse> approvedMembers(Authentication authentication) {
+        requireAdmin(authentication);
+        return appUserRepository.findAll().stream()
+                .filter(u -> u.getMembershipStatus() == MembershipStatus.APPROVED)
+                .map(MeResponse::from)
+                .toList();
+    }
+
+    @PostMapping("/{userId}/promote")
+    public MeResponse promote(Authentication authentication, @PathVariable Long userId) {
+        requireAdmin(authentication);
+        AppUser user = find(userId);
+        user.setAdmin(true);
+        return MeResponse.from(appUserRepository.save(user));
+    }
+
     @PostMapping("/{userId}/approve")
     public MeResponse approve(Authentication authentication, @PathVariable Long userId) {
         requireAdmin(authentication);

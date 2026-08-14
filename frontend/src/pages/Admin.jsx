@@ -20,10 +20,15 @@ export default function Admin({ me, onSignedOut }) {
   const [postingAnnouncement, setPostingAnnouncement] = useState(false)
   const [deletingAnnouncementId, setDeletingAnnouncementId] = useState(null)
 
+  const [members, setMembers] = useState(null)
+  const [memberError, setMemberError] = useState(null)
+  const [promotingId, setPromotingId] = useState(null)
+
   useEffect(() => {
     load()
     loadCredentials()
     loadAnnouncements()
+    loadMembers()
   }, [])
 
   async function load() {
@@ -91,6 +96,27 @@ export default function Admin({ me, onSignedOut }) {
       setAnnouncementError(err.message)
     } finally {
       setPostingAnnouncement(false)
+    }
+  }
+
+  async function loadMembers() {
+    try {
+      setMembers(await api.approvedMembers())
+    } catch (err) {
+      setMemberError(err.message)
+    }
+  }
+
+  async function promote(userId) {
+    setPromotingId(userId)
+    setMemberError(null)
+    try {
+      const updated = await api.promoteUser(userId)
+      setMembers((prev) => prev.map((m) => (m.id === userId ? updated : m)))
+    } catch (err) {
+      setMemberError(err.message)
+    } finally {
+      setPromotingId(null)
     }
   }
 
@@ -207,6 +233,46 @@ export default function Admin({ me, onSignedOut }) {
                       Reject
                     </button>
                   </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        <section className="flex flex-col gap-4 border-t border-stone-200 pt-8">
+          <div>
+            <h2 className="font-display text-xl font-semibold text-stone-900">Members</h2>
+            <p className="mt-1 text-sm text-stone-600">Grant admin access to another approved member.</p>
+          </div>
+
+          {memberError && (
+            <p className="rounded-lg bg-status-denied-bg px-4 py-3 text-sm text-status-denied">{memberError}</p>
+          )}
+
+          {members === null && !memberError && <Spinner label="Loading members…" />}
+
+          {members && members.length > 0 && (
+            <ul className="flex flex-col gap-3">
+              {members.map((u) => (
+                <li key={u.id} className="cc-card flex flex-wrap items-center justify-between gap-4 p-4">
+                  <div className="flex items-center gap-3">
+                    <Avatar name={u.name || u.email} />
+                    <div>
+                      <p className="font-medium text-stone-900">{u.name || u.email}</p>
+                      <p className="text-sm text-stone-500">{u.email}</p>
+                    </div>
+                  </div>
+                  {u.admin ? (
+                    <span className="cc-btn-sm text-sm font-medium text-stone-400">Admin</span>
+                  ) : (
+                    <button
+                      className="cc-btn-secondary cc-btn-sm"
+                      disabled={promotingId === u.id}
+                      onClick={() => promote(u.id)}
+                    >
+                      {promotingId === u.id ? 'Making admin…' : 'Make admin'}
+                    </button>
+                  )}
                 </li>
               ))}
             </ul>
