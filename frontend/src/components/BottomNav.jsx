@@ -20,6 +20,7 @@ const tabs = [
 
 const tabClasses = ({ isActive }) =>
   'flex flex-1 flex-col items-center justify-center gap-0.5 text-xs font-medium ' +
+  'transition-transform duration-150 motion-safe:active:scale-90 ' +
   (isActive ? 'text-brand-700' : 'text-stone-500')
 
 export default function BottomNav({ me, onSignedOut }) {
@@ -41,7 +42,11 @@ export default function BottomNav({ me, onSignedOut }) {
           ))}
           <button
             onClick={() => setMoreOpen(true)}
-            className={'flex flex-1 flex-col items-center justify-center gap-0.5 text-xs font-medium ' + (moreOpen ? 'text-brand-700' : 'text-stone-500')}
+            className={
+              'flex flex-1 flex-col items-center justify-center gap-0.5 text-xs font-medium ' +
+              'transition-transform duration-150 motion-safe:active:scale-90 ' +
+              (moreOpen ? 'text-brand-700' : 'text-stone-500')
+            }
           >
             <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor">
               <circle cx="5" cy="12" r="1.75" />
@@ -53,7 +58,7 @@ export default function BottomNav({ me, onSignedOut }) {
         </div>
       </nav>
 
-      {moreOpen && <MoreSheet me={me} onSignedOut={onSignedOut} onClose={() => setMoreOpen(false)} />}
+      <MoreSheet me={me} open={moreOpen} onSignedOut={onSignedOut} onClose={() => setMoreOpen(false)} />
     </>
   )
 }

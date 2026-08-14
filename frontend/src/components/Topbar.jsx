@@ -49,6 +49,10 @@ export default function Topbar({ me, onSignedOut }) {
   const [unreadNotifications, setUnreadNotifications] = useState(0)
   const [query, setQuery] = useState('')
   const [menuOpen, setMenuOpen] = useState(false)
+  // Mirrors MoreSheet's mounted/closing split: menuOpen going false plays the
+  // exit animation instead of yanking the menu out of the DOM instantly.
+  const [menuMounted, setMenuMounted] = useState(false)
+  const [menuClosing, setMenuClosing] = useState(false)
   const menuRef = useRef(null)
   const navigate = useNavigate()
 
@@ -63,6 +67,23 @@ export default function Topbar({ me, onSignedOut }) {
     document.addEventListener('mousedown', onClickOutside)
     return () => document.removeEventListener('mousedown', onClickOutside)
   }, [])
+
+  useEffect(() => {
+    if (menuOpen) {
+      setMenuMounted(true)
+      setMenuClosing(false)
+    } else if (menuMounted) {
+      setMenuClosing(true)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [menuOpen])
+
+  function handleMenuAnimationEnd() {
+    if (menuClosing) {
+      setMenuMounted(false)
+      setMenuClosing(false)
+    }
+  }
 
   function submitSearch(e) {
     e.preventDefault()
@@ -124,12 +145,18 @@ export default function Topbar({ me, onSignedOut }) {
             <span>Me</span>
           </button>
 
-          {menuOpen && (
-            <div className="absolute right-0 top-full mt-2 w-64 rounded-xl border border-stone-200 bg-surface p-2 shadow-lg">
+          {menuMounted && (
+            <div
+              className={
+                'absolute right-0 top-full mt-2 w-64 rounded-xl border border-stone-200 bg-surface p-2 shadow-lg ' +
+                (menuClosing ? 'cc-menu-exit' : 'cc-menu-enter')
+              }
+              onAnimationEnd={handleMenuAnimationEnd}
+            >
               <NavLink
                 to="/profile"
                 onClick={() => setMenuOpen(false)}
-                className="flex items-center gap-3 rounded-lg px-2.5 py-2 hover:bg-stone-50"
+                className="cc-row flex items-center gap-3 rounded-lg px-2.5 py-2 hover:bg-stone-50"
               >
                 <Avatar name={me.name || me.email} />
                 <div className="min-w-0 leading-tight">
@@ -143,7 +170,7 @@ export default function Topbar({ me, onSignedOut }) {
                 <NavLink
                   to="/admin"
                   onClick={() => setMenuOpen(false)}
-                  className="mt-1 flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium text-stone-700 hover:bg-stone-50"
+                  className="cc-row mt-1 flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium text-stone-700 hover:bg-stone-50"
                 >
                   <ShieldIcon className="h-4 w-4 shrink-0" />
                   Admin
@@ -153,13 +180,13 @@ export default function Topbar({ me, onSignedOut }) {
               <NavLink
                 to="/public-directory"
                 onClick={() => setMenuOpen(false)}
-                className="mt-1 flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium text-stone-700 hover:bg-stone-50"
+                className="cc-row mt-1 flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium text-stone-700 hover:bg-stone-50"
               >
                 <GlobeIcon className="h-4 w-4 shrink-0" />
                 Public directory
               </NavLink>
 
-              <ThemeToggle className="mt-1 flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium text-stone-700 hover:bg-stone-50" />
+              <ThemeToggle className="cc-row mt-1 flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium text-stone-700 hover:bg-stone-50" />
 
               <div className="my-2 border-t border-stone-100" />
 
@@ -169,7 +196,7 @@ export default function Topbar({ me, onSignedOut }) {
                     key={to}
                     to={to}
                     onClick={() => setMenuOpen(false)}
-                    className="rounded-lg px-2.5 py-1.5 text-xs text-stone-500 hover:bg-stone-50 hover:text-stone-900"
+                    className="cc-row rounded-lg px-2.5 py-1.5 text-xs text-stone-500 hover:bg-stone-50 hover:text-stone-900"
                   >
                     {label}
                   </NavLink>
@@ -180,7 +207,7 @@ export default function Topbar({ me, onSignedOut }) {
 
               <button
                 onClick={logout}
-                className="mt-1 flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium text-stone-500 hover:bg-stone-50 hover:text-stone-900"
+                className="cc-row mt-1 flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium text-stone-500 hover:bg-stone-50 hover:text-stone-900"
               >
                 <LogOutIcon className="h-4 w-4 shrink-0" />
                 Log out

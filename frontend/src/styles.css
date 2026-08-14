@@ -165,6 +165,15 @@
            disabled:cursor-default disabled:opacity-50 disabled:hover:bg-transparent;
   }
 
+  /* Row-style tap target shared by sheet/menu items (MoreSheet, Topbar "Me"
+     menu) — feedback fires on press, not just hover, so touch users get the
+     same "it registered" signal a :hover-only state never gives them.
+     motion-reduce: variants come from Tailwind's built-in media query, so
+     this respects prefers-reduced-motion with no extra JS. */
+  .cc-row {
+    @apply transition-[background-color,transform] duration-150 motion-safe:active:scale-[0.98];
+  }
+
   /* text-base (16px) below the sm breakpoint, not text-sm (14px) — iOS Safari
      auto-zooms the whole page on focus for any input/textarea under 16px,
      which reads as the layout "jumping" or going out of alignment the moment
@@ -173,6 +182,21 @@
     @apply w-full rounded-lg border border-stone-300 bg-surface px-3 py-2 text-base sm:text-sm text-stone-900
            placeholder:text-stone-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/25;
   }
+}
+
+/* cc-btn/cc-btn-secondary/cc-btn-clay get the same press feedback as
+   cc-row — added outside @layer components so it composes with the
+   transition-colors already on each class instead of one @apply
+   overriding the other. */
+.cc-btn,
+.cc-btn-secondary,
+.cc-btn-clay {
+  transition-property: background-color, border-color, transform;
+}
+.cc-btn:not(:disabled),
+.cc-btn-secondary:not(:disabled),
+.cc-btn-clay:not(:disabled) {
+  @apply motion-safe:active:scale-[0.97];
 }
 
 /*
@@ -220,4 +244,81 @@
 
 .cc-reaction-burst {
   animation: cc-reaction-float-up 700ms ease-out forwards;
+}
+
+/*
+ * Sheet/menu open+close (MoreSheet, Topbar "Me" menu). Two curves, not one:
+ * opening decelerates into place (standard Apple sheet ease-out), closing
+ * uses the mirrored curve — cubic-bezier(1-x2,1-y2,1-x1,1-y1) of the open
+ * curve — so the exit reads as the entrance played backwards rather than a
+ * different motion (see "Spatial Consistency" / mirrored easing). MoreSheet
+ * also drives an inline transform during drag; these classes only cover the
+ * non-gesture open/close (tap "More", tap backdrop, tap a link).
+ */
+@keyframes cc-sheet-in {
+  0% { transform: translateY(100%); }
+  100% { transform: translateY(0); }
+}
+@keyframes cc-sheet-out {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(100%); }
+}
+@keyframes cc-fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes cc-fade-out {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes cc-menu-in {
+  0% { opacity: 0; transform: scale(0.92) translateY(-4px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes cc-menu-out {
+  0% { opacity: 1; transform: scale(1) translateY(0); }
+  100% { opacity: 0; transform: scale(0.92) translateY(-4px); }
+}
+
+.cc-sheet-enter { animation: cc-sheet-in 320ms cubic-bezier(0.32, 0.72, 0, 1) both; }
+.cc-sheet-exit { animation: cc-sheet-out 280ms cubic-bezier(1, 0, 0.68, 0.28) both; }
+.cc-backdrop-enter { animation: cc-fade-in 320ms ease-out both; }
+.cc-backdrop-exit { animation: cc-fade-out 280ms ease-in both; }
+
+/* Anchored to the trigger button (top-right "Me" menu), so it grows from
+   its source instead of just appearing — see "Spatial Consistency". */
+.cc-menu-enter { transform-origin: top right; animation: cc-menu-in 160ms cubic-bezier(0.32, 0.72, 0, 1) both; }
+.cc-menu-exit { transform-origin: top right; animation: cc-menu-out 120ms cubic-bezier(1, 0, 0.68, 0.28) both; }
+
+/*
+ * Reduced motion: keep state changes legible (still fade) but drop every
+ * transform — slides, scales, overshoot/bounce — and the momentum-flavored
+ * float-up, per "Reduced Motion & Accessibility". Durations shrink close to
+ * (not exactly) 0 so screen readers/focus changes aren't fighting an
+ * animation still technically in flight.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .cc-reaction-tray,
+  .cc-reaction-emoji-pop,
+  .cc-reaction-bounce,
+  .cc-reaction-burst,
+  .cc-sheet-enter,
+  .cc-sheet-exit,
+  .cc-menu-enter,
+  .cc-menu-exit {
+    animation: none !important;
+  }
+  .cc-reaction-tray,
+  .cc-menu-enter,
+  .cc-menu-exit {
+    transition: opacity 80ms linear !important;
+  }
+  .cc-sheet-enter,
+  .cc-sheet-exit {
+    transform: none !important;
+  }
+  .cc-backdrop-enter,
+  .cc-backdrop-exit {
+    animation-duration: 80ms !important;
+  }
 }
