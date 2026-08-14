@@ -55,7 +55,7 @@ export default function MessageThread({ me, onSignedOut }) {
 
   return (
     <AppLayout me={me} onSignedOut={onSignedOut}>
-      <main className="mx-auto flex h-[calc(100vh-4rem)] max-w-2xl flex-col px-4 py-6 md:h-screen md:py-8">
+      <main className="mx-auto flex h-[calc(100dvh-4rem-env(safe-area-inset-bottom))] max-w-2xl flex-col px-4 py-6 md:h-[calc(100dvh-3.5rem)] md:py-8">
         <div className="flex items-center gap-3 border-b border-stone-200 pb-4">
           <Link to="/messages" className="text-sm text-brand-700 hover:underline">←</Link>
           {counterpart ? (
